@@ -270,6 +270,8 @@ function vCd(x){if(!x||typeof x!=='object')return null;const id=cleanId(x.id),na
 const emptyModel=()=>({events:[],countdowns:[],deleted:{}});
 function cleanDeleted(d){const o={};if(d&&typeof d==='object'&&!Array.isArray(d))Object.keys(d).forEach(k=>{const t=Number(d[k]);if(/^[A-Za-z0-9_-]{1,40}$/.test(k)&&isFinite(t)&&t>0)o[k]=t});return o}
 function cleanModel(d){
+  /* Accept object or a single JSON string (some dashboard edits double-encode jsonb). */
+  if(typeof d==='string'){try{d=JSON.parse(d)}catch(e){return emptyModel()}}
   if(!d||typeof d!=='object')return emptyModel();
   const list=(arr,v)=>{const seen={};return (Array.isArray(arr)?arr:[]).map(v).filter(x=>{if(!x||seen[x.id])return false;seen[x.id]=1;return true})};
   return {events:list(d.events,vEvent),countdowns:list(d.countdowns,vCd),deleted:cleanDeleted(d.deleted)};
@@ -372,28 +374,37 @@ async function cloudSync(manual){
   try{
     let done=false,merged=null;
     for(let n=0;n<5&&!done;n++){
-      const rows=await rest('GET','?select=data,version&user_id=eq.'+encodeURIComponent(uid)+'&limit=1');
-      if(owner!==uid)return;
-      const row=rows&&rows[0],remote=cleanModel(row&&row.data);
+      /* Read EVERY row for this user (ordered newest version first). A missing UNIQUE(user_id)
+         can leave duplicate rows; limit=1 without ORDER BY made one device see an empty/stale
+         row and report SYNCED while another device held the real events. */
+      const rows=await rest('GET','?select=data,version&user_id=eq.'+encodeURIComponent(uid)+'&order=version.desc.nullslast')||[];
+      if(owner!==uid){setStatus(owner==='local'?'off':'idle');return}
+      let remote=emptyModel(),primary=null,primaryV=-1;
+      rows.forEach(row=>{
+        remote=mergeModels(remote,cleanModel(row&&row.data));
+        const v=Number(row.version)||0;
+        if(v>primaryV){primaryV=v;primary=row}
+      });
       merged=mergeModels(model,remote);
-      if(!row){
+      if(!primary){
         if(isEmpty(merged)){done=true;break}
         try{await rest('POST','',{user_id:uid,data:toRemote(merged),version:1},{Prefer:'return=minimal'});done=true}
         catch(e){if(e.status===409||e.code==='23505')continue;throw e}
       }else if(norm(merged)===norm(remote)){done=true}
       else{
-        const v=Number(row.version)||1;
+        const v=primaryV>0?primaryV:(Number(primary.version)||1);
         const upd=await rest('PATCH','?user_id=eq.'+encodeURIComponent(uid)+'&version=eq.'+v,{data:toRemote(merged),version:v+1,updated_at:new Date().toISOString()},{Prefer:'return=representation'});
         if(Array.isArray(upd)&&upd.length)done=true;
       }
     }
     if(!done)throw new Error('Another device was saving at the same moment. Retrying shortly.');
-    if(owner!==uid)return;
+    if(owner!==uid){setStatus(owner==='local'?'off':'idle');return}
     const latest=mergeModels(model,merged);
     if(norm(latest)!==norm(merged))again=true;
     model=latest;saveModel();
     lastSyncAt=new Date();blockedUntil=0;setStatus('ok');
-    if(norm(model)!==before)renderAll();
+    /* Always re-render after a successful pull so a device that started empty shows new events. */
+    renderAll();
     if(manual)say('Synced.');
   }catch(e){
     const d=describe(e);
@@ -569,7 +580,7 @@ g('cdName').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefau
 g('cdList').addEventListener('click',ev=>{const d=ev.target.closest('[data-del-cd]');if(d){deleteCountdown(d.dataset.delCd);return}const e=ev.target.closest('[data-edit-cd]');if(e)startEditCd(e.dataset.editCd)});
 document.addEventListener('click',ev=>{
   const go=ev.target.closest('[data-go]');if(go&&typeof window.showPage==='function'){window.showPage(go.dataset.go);return}
-  if(ev.target.closest('[data-sync-now]'))cloudSync(true);
+  if(ev.target.closest('[data-sync-now]')){checkOwner();cloudSync(true)}
 });
 
 /* Hooks into the existing app (wrappers only call the original first): refresh on page change, start a cloud sync whenever the
