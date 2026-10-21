@@ -38,21 +38,78 @@ body.study-dnd .quote-banner,body.study-dnd .sidebar-note{display:none}body.stud
 @media(max-width:900px){.app{padding:10px}.topbar{flex-wrap:wrap}.topright{width:100%;justify-content:flex-start}.system-toggles{justify-content:flex-start}.layout{grid-template-columns:1fr}.sidebar{min-height:auto}.hunter-level{margin-left:auto}.hunter-status-panel{background-position:center top!important}}
 @media(max-width:520px){.system-toggle{font-size:9px;padding:8px 7px}.hunter-profile-line{gap:12px}.hunter-level{min-width:72px}.hunter-level .level-number{font-size:36px}.status-meta{gap:14px}.status-meta strong{font-size:15px}.status-meta .meta-icon{font-size:17px}.app{padding:8px}.panel{padding:14px}}
 
+
+/* ===== Calendar, Countdown and Next-Up widget (beta) — all class names are prefixed cal-/cd-/nu- ===== */
+.t-test{--tc:var(--red)}.t-revision{--tc:var(--purple)}.t-study{--tc:var(--cyan)}.t-other{--tc:var(--orange)}
+.tag.cal-tag{color:var(--tc,var(--cyan));background:#06203a;border:1px solid var(--tc,var(--cyan))}
+.cal-layout{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(280px,.8fr);gap:14px;align-items:start}
+.cal-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:12px}
+.cal-title{flex:1;text-align:center;font-size:16px;font-weight:800;letter-spacing:.6px}
+.btn.cal-nav{min-width:46px;min-height:46px;font-size:20px;line-height:1;padding:0 12px}
+.cal-dow,.cal-grid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:4px}
+.cal-dow{margin-bottom:4px;text-align:center;font-size:10px;letter-spacing:.5px;color:var(--muted)}
+.cal-blank{height:clamp(46px,7vw,72px)}
+.cal-cell{height:clamp(46px,7vw,72px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;padding:0;border:1px solid #123650;border-radius:9px;background:#041327bd;color:var(--text);font-size:14px;font-weight:700;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.cal-cell:hover{border-color:#1f9ce8}
+.cal-cell.today{border-color:var(--cyan);background:#08365a;color:#fff;box-shadow:inset 0 0 0 1px var(--cyan),0 0 12px #22baff40}
+.cal-cell.selected{border-color:#9be9ff;background:#0a3a63}
+.cal-cell.selected:not(.today){box-shadow:inset 0 0 0 1px #9be9ff}
+.cal-dots{display:flex;gap:3px;height:6px;align-items:center}
+.cal-dot{display:block;width:6px;height:6px;border-radius:50%;background:var(--tc,var(--cyan))}
+.cal-legend{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;margin-top:12px}
+.cal-legend-items{display:flex;flex-wrap:wrap;gap:10px;font-size:10px;color:var(--muted)}
+.cal-legend-items span{display:inline-flex;align-items:center;gap:5px}
+.btn.cal-big{min-height:44px;width:100%}
+.cal-del{flex:none;min-width:40px;min-height:40px;border:1px solid #123650;border-radius:8px;background:transparent;color:#8fb2c8;font-size:20px;line-height:1;touch-action:manipulation}
+.cal-del:hover{color:var(--red);border-color:var(--red)}
+.cd-layout{display:grid;grid-template-columns:minmax(260px,.8fr) minmax(0,1.2fr);gap:14px;align-items:start}
+.cd-card{display:flex;align-items:center;gap:12px;padding:14px;border:1px solid #123650;border-radius:11px;background:#041327bd}
+.cd-main{flex:1;min-width:0}
+.cd-name{font-weight:800;font-size:14px;overflow-wrap:anywhere}
+.cd-count{text-align:right;flex:none}
+.cd-count strong{display:block;font-size:30px;line-height:1.1;color:var(--cyan);font-variant-numeric:tabular-nums}
+.cd-count span{font-size:10px;color:var(--muted);letter-spacing:.5px}
+.cd-card.today{border-color:var(--green)}.cd-card.today .cd-count strong{color:var(--green)}
+.cd-card.passed{opacity:.72}.cd-card.passed .cd-count strong{color:var(--muted);font-size:20px}
+.nu-links{display:flex;gap:6px;flex-wrap:wrap}
+.nu-wrap{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:12px}
+.nu-box{min-width:0;padding:12px;border:1px solid #123650;border-radius:10px;background:#041327bd}
+.nu-name{font-weight:800;font-size:14px;margin-top:6px;overflow-wrap:anywhere}
+.nu-big{font-size:28px;font-weight:850;line-height:1.15;color:var(--cyan);font-variant-numeric:tabular-nums}
+.nu-big small{font-size:11px;font-weight:600;color:var(--muted);margin-left:4px}
+.nu-ev{display:flex;align-items:center;gap:8px;margin-top:9px;font-size:12px}
+.nu-ev-title{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+@media(max-width:900px){.cal-layout,.cd-layout{grid-template-columns:1fr}}
+@media(max-width:700px){.nu-wrap{grid-template-columns:1fr}}
+@media(max-width:480px){.cal-cell{font-size:13px;border-radius:7px}.cal-dow,.cal-grid{gap:3px}.cd-count strong{font-size:26px}}
+body.amoled .cal-cell,body.amoled .cd-card,body.amoled .nu-box{background:rgba(0,0,0,.94)}
+body.amoled .cal-cell.today{background:#001c33}body.amoled .cal-cell.selected{background:#06233d}
 </style></head>
 <body><div class="app">
 <header class="topbar"><div class="brand"><div class="sigil">S</div><div><div class="brandname">THE <span>SYSTEM</span></div><div class="eyebrow">NEET HUNTER // PERSONAL COMMAND CENTER</div></div></div><div class="topright"><div class="date" id="today"></div><div class="rank" id="syncChip" style="cursor:pointer" onclick="showPage('account')">☁ LOCAL ONLY</div><div class="rank" id="topRank">RANK // E</div><div class="system-toggles" aria-label="Study display controls"><button type="button" class="system-toggle" id="alwaysOnToggle" aria-pressed="false"><span class="led"></span> ALWAYS ON <span id="alwaysOnState">OFF</span></button><button type="button" class="system-toggle" id="amoledToggle" aria-pressed="false"><span class="led"></span> AMOLED <span id="amoledState">OFF</span></button><button type="button" class="system-toggle" id="studyDndToggle" aria-pressed="true"><span class="led"></span> STUDY DND <span id="studyDndState">ON</span></button></div></div></header>
 <div class="quote-banner"><strong>HUNTER RULE</strong> No fake progress. No perfect days. Just honest work, repeated.</div>
-<div class="layout"><aside class="sidebar"><div class="side-label">COMMAND MENU</div><button class="navbtn active" data-page="dashboard"><b>⌂</b> Overview</button><button class="navbtn" data-page="planner"><b>▤</b> Daily Planner</button><button class="navbtn" data-page="pomodoro"><b>◷</b> Pomodoro</button><button class="navbtn" data-page="rank"><b>♜</b> Hunter Rank</button><button class="navbtn" data-page="subjects"><b>◈</b> Subject Stats</button><button class="navbtn" data-page="analytics"><b>⌁</b> Progress Log</button><button class="navbtn" data-page="account"><b>☁</b> Sync Account</button><div class="sidebar-note"><strong>HUNTER PROTOCOL</strong><p>Consistency beats intensity. Complete today's mission, then return tomorrow.</p></div></aside>
+<div class="layout"><aside class="sidebar"><div class="side-label">COMMAND MENU</div><button class="navbtn active" data-page="dashboard"><b>⌂</b> Overview</button><button class="navbtn" data-page="planner"><b>▤</b> Daily Planner</button><button class="navbtn" data-page="pomodoro"><b>◷</b> Pomodoro</button><button class="navbtn" data-page="rank"><b>♜</b> Hunter Rank</button><button class="navbtn" data-page="subjects"><b>◈</b> Subject Stats</button><button class="navbtn" data-page="analytics"><b>⌁</b> Progress Log</button><button class="navbtn" data-page="calendar"><b>▦</b> Calendar</button><button class="navbtn" data-page="countdown"><b>◐</b> Countdown</button><button class="navbtn" data-page="account"><b>☁</b> Sync Account</button><div class="sidebar-note"><strong>HUNTER PROTOCOL</strong><p>Consistency beats intensity. Complete today's mission, then return tomorrow.</p></div></aside>
 <main class="main">
 <section class="section active" id="dashboard"><div class="hero"><div><div class="eyebrow">PERSONAL STATUS // 001</div><h1>Welcome back, <em>Hunter.</em></h1><p class="sub">Your next rank is built one focused session at a time.</p></div><button class="btn" onclick="showPage('planner')">＋ ADD MISSION</button></div>
 <div class="panel hunter-status-panel" style="margin-bottom:14px;border-color:#27606a;background:radial-gradient(ellipse at 90% 0%,#143a42 0,transparent 45%),linear-gradient(145deg,#0e1a20ed,#0a1318ed)"><div class="panelhead"><h2>◉ HUNTER STATUS</h2><button class="btn ghost" onclick="showPage('rank')">RANK DETAILS ↗</button></div><div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"><div style="width:78px;height:78px;border:2px solid var(--cyan);border-radius:14px;display:grid;place-items:center;box-shadow:0 0 28px #4ce6ef22"><div style="text-align:center"><div id="dashRankLetter" style="font-size:32px;line-height:1;font-weight:900;color:var(--cyan)">E</div><div class="eyebrow" style="font-size:8px">RANK</div></div></div><div style="flex:1;min-width:160px"><div id="dashRankTitle" style="font-size:18px;font-weight:800">E-RANK HUNTER</div><div class="tiny" id="dashXPText">0 XP · Your journey begins here.</div><div class="progress" style="height:8px;margin-top:10px"><i id="dashXPBar"></i></div><div class="tiny" id="dashNextRank" style="margin-top:6px">Earn XP to unlock your next rank.</div></div><div class="hunter-level"><div class="level-caption">LEVEL</div><div class="level-number" id="dashLevelNum">1</div><div class="level-xp" id="dashLevelXP">0 / 100 XP</div></div></div></div>
 <div class="stats"><div class="stat"><div class="stat-top">FOCUS TODAY <span class="stat-icon">◷</span></div><div class="stat-num"><span id="hoursStat">0</span><small style="font-size:13px;color:var(--muted)"> hrs</small></div><div class="stat-foot">Target: <span id="targetLabel">6</span> hours</div></div><div class="stat"><div class="stat-top">MISSIONS DONE <span class="stat-icon">✓</span></div><div class="stat-num" id="tasksStat">0/0</div><div class="stat-foot">Tasks completed today</div></div><div class="stat"><div class="stat-top">STUDY STREAK <span class="stat-icon">ϟ</span></div><div class="stat-num"><span id="streakStat">0</span><small style="font-size:13px;color:var(--muted)"> days</small></div><div class="stat-foot">Log study to build your streak</div></div><div class="stat"><div class="stat-top">TOTAL STUDY <span class="stat-icon">⌁</span></div><div class="stat-num"><span id="totalStat">0</span><small style="font-size:13px;color:var(--muted)"> hrs</small></div><div class="stat-foot">All-time logged hours</div></div></div>
+<div class="panel" id="nextUpPanel" style="margin-bottom:14px"><div class="panelhead"><h2>◐ NEXT UP</h2><div class="nu-links"><button type="button" class="btn ghost" data-go="calendar">CALENDAR ↗</button><button type="button" class="btn ghost" data-go="countdown">COUNTDOWN ↗</button></div></div><div id="nextUpBody"></div></div>
 <div class="grid2"><div class="panel"><div class="panelhead"><h2>Today's Study Output</h2><span class="tiny">DAILY TARGET</span></div><div class="ringwrap"><div class="ring" id="dailyRing"><div class="ringinner"><strong id="dailyPct">0%</strong><span>COMPLETE</span></div></div><div class="ringlegend"><div class="legendrow"><span><i class="dot"></i>Study time logged</span><strong id="ringHours">0h</strong></div><div class="progress"><i id="dailyBar"></i></div><div class="legendrow"><span><i class="dot purple"></i>Remaining target</span><strong id="remainingHours">6h</strong></div><div class="tiny">Small honest sessions count. Log your real time.</div></div></div></div><div class="panel"><div class="panelhead"><h2>Subject Progress</h2><button class="btn ghost" onclick="showPage('subjects')">EDIT</button></div><div id="miniSubjects"></div></div></div>
 <div class="grid2"><div class="panel"><div class="panelhead"><h2>Today's Missions</h2><button class="btn ghost" onclick="showPage('planner')">VIEW ALL</button></div><div class="tasklist" id="dashTasks"></div></div><div class="panel"><div class="panelhead"><h2>Quick Study Log</h2><span class="tiny">ADD SESSION</span></div><div class="focusbox"><div class="label">SESSION COMPLETE?</div><h3>Record your effort.</h3><p>Enter how long you actually studied. No judgment, just data.</p><div class="fieldrow"><div class="field"><label>SUBJECT</label><select id="logSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div><div class="field"><label>HOURS</label><input id="logHours" type="number" min="0.1" max="16" step="0.25" placeholder="e.g. 1.5"></div></div><button class="btn primary" style="width:100%" onclick="logSession()">＋ LOG STUDY SESSION</button></div></div></div></section>
 <section class="section" id="pomodoro"><div class="hero"><div><div class="eyebrow">FOCUS PROTOCOL // 005</div><h1>Pomodoro <em>Timer.</em></h1><p class="sub">One focused session at a time. Your completed focus blocks count toward today's study log.</p></div></div><div class="timer-layout"><div class="panel timer-panel"><div class="eyebrow" id="timerStatus">READY WHEN YOU ARE</div><div class="timer-ring" id="timerRing"><div class="timer-inner"><div class="timer-time" id="timerDisplay">50:00</div><div class="timer-mode" id="timerMode">FOCUS SESSION</div></div></div><div class="timer-controls"><button class="btn primary" id="timerStart" onclick="toggleTimer()">▶ START FOCUS</button><button class="btn ghost" onclick="resetTimer()">↺ RESET</button><button class="btn ghost" onclick="skipTimer()">SKIP ↗</button></div><p class="notice" id="timerHint">Keep this tab open while the timer runs. A finished focus block is logged automatically.</p></div><div><div class="panel"><div class="panelhead"><h2>SESSION SETTINGS</h2><span class="tiny">YOUR PACE</span></div><div class="timer-settings"><div class="field"><label>FOCUS LENGTH</label><select id="focusLength" onchange="changeTimerSettings()"><option value="50">50 minutes</option><option value="25">25 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option></select></div><div class="field"><label>BREAK LENGTH</label><select id="breakLength" onchange="changeTimerSettings()"><option value="10">10 minutes</option><option value="5">5 minutes</option><option value="15">15 minutes</option></select></div><div class="field" style="grid-column:1/-1"><label>SUBJECT FOR THIS SESSION</label><select id="timerSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div></div><p class="notice">Settings apply when you reset or switch sessions. You can pause and resume anytime.</p></div><div class="timer-stats"><div class="timer-mini"><strong id="focusCount">0</strong><span>FOCUS BLOCKS TODAY</span></div><div class="timer-mini"><strong id="focusMinutes">0 min</strong><span>FOCUSED TIME TODAY</span></div></div><div class="panel" style="margin-top:14px"><div class="panelhead"><h2>THE PROTOCOL</h2></div><p class="tiny">01 / Start one focus block.</p><p class="tiny">02 / Study only the chosen task.</p><p class="tiny">03 / Take your break when the timer ends.</p><p class="tiny">04 / Repeat. No need to make the day perfect.</p></div></div></div></section><section class="section" id="planner"><div class="hero"><div><div class="eyebrow">MISSION CONTROL // 002</div><h1>Daily <em>Planner.</em></h1><p class="sub">Write the next actionable task. Keep it clear and finishable.</p></div></div><div class="panel"><div class="panelhead"><h2>ADD A MISSION</h2><span class="tiny">TODAY'S TASK QUEUE</span></div><div class="taskadder"><input id="taskInput" placeholder="e.g. WPE — solve 25 PYQs" maxlength="120"><select id="taskSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option><option>General</option></select><button class="btn primary" onclick="addTask()">ADD TASK</button></div><div class="tasklist" id="allTasks"></div><p class="notice">Tasks are saved on this device. Start with the most important task, not the perfect plan.</p></div><div class="panel" style="margin-top:14px"><div class="panelhead"><h2>DAILY STUDY TARGET</h2><span class="tiny">PERSONAL SETTING</span></div><div class="fieldrow"><div class="field"><label>HOURS PER DAY</label><input id="targetInput" type="number" min="1" max="16" step="0.5" value="6"></div><div class="field" style="align-content:end"><button class="btn" onclick="saveTarget()">SAVE TARGET</button></div></div></div></section>
 <section class="section" id="rank"><div class="hero"><div><div class="eyebrow">HUNTER ASSOCIATION // RANKING</div><h1>Hunter <em>Rank.</em></h1><p class="sub">Earn XP through real study sessions and completed missions. God-Level is a separate verified NEET top-10 and mastery achievement.</p></div></div><div class="panel" style="margin-bottom:14px;border-color:#27606a;background:radial-gradient(ellipse at 90% 0%,#143a42 0,transparent 45%),#0b171d"><div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap"><div id="rankEmblem" style="width:110px;height:110px;border:2px solid var(--cyan);border-radius:18px;display:grid;place-items:center;font-size:52px;font-weight:900;color:var(--cyan);box-shadow:0 0 35px #4ce6ef20">E</div><div style="flex:1;min-width:180px"><div class="eyebrow">CURRENT CLASS</div><h2 id="rankTitle" style="font-size:27px;margin:4px 0">E-RANK HUNTER</h2><p id="rankDescription" class="sub">Every hunter starts somewhere. Build your record one session at a time.</p><div style="font-size:18px;font-weight:800;margin-top:12px"><span id="rankXP">0</span> <span class="tiny">XP</span></div><div class="progress" style="height:9px;margin-top:8px"><i id="rankBar"></i></div><div class="tiny" id="rankProgressText" style="margin-top:7px">0 XP to next rank</div></div></div></div><div class="grid2"><div class="panel"><div class="panelhead"><h2>HOW XP IS EARNED</h2><span class="tiny">AUTOMATIC</span></div><div class="tasklist"><div class="task"><span class="tag">+60 XP</span><div class="tasktext">Per hour of logged study</div></div><div class="task"><span class="tag">+15 XP</span><div class="tasktext">Per completed mission</div></div><div class="task"><span class="tag">+10 XP</span><div class="tasktext">Per day in your best study streak</div></div></div><p class="notice">XP is calculated from this browser's saved study log and completed tasks. It is a motivational game score, not a measure of your worth.</p></div><div class="panel"><div class="panelhead"><h2>RANK LADDER</h2><span class="tiny">YOUR NEXT OBJECTIVE</span></div><div id="rankLadder" class="tasklist"></div></div></div></section>
 <section class="section" id="subjects"><div class="hero"><div><div class="eyebrow">TRAINING ATTRIBUTES // 003</div><h1>Subject <em>Stats.</em></h1><p class="sub">Set approximate completion percentages. Update them when your work changes.</p></div></div><div class="subjectcards" id="subjectCards"></div><p class="notice">These percentages are yours to set; nothing is pre-filled as completed.</p></section>
 <section class="section" id="analytics"><div class="hero"><div><div class="eyebrow">HISTORY & CONSISTENCY // 004</div><h1>Progress <em>Log.</em></h1><p class="sub">A simple record of effort, not a judgment of your worth.</p></div></div><div class="grid2"><div class="panel"><div class="panelhead"><h2>LAST 7 DAYS</h2><span class="tiny">HOURS LOGGED</span></div><div class="weekgrid" id="weekGrid"></div></div><div class="panel"><div class="panelhead"><h2>ALL-TIME TOTALS</h2></div><div id="subjectTotals"></div></div></div><div class="panel"><div class="panelhead"><h2>RECENT SESSIONS</h2><button class="btn ghost" onclick="exportData()">EXPORT BACKUP</button></div><div id="sessionList"></div><p class="notice">Export creates a JSON backup you can keep. This site stores data locally in this browser.</p></div></section>
+<section class="section" id="calendar"><div class="hero"><div><div class="eyebrow">SCHEDULE // 007</div><h1>Study <em>Calendar.</em></h1><p class="sub">Plan tests, revision blocks and study goals. Tap a date to review it or add an event.</p></div></div>
+<div class="cal-layout">
+<div class="panel"><div class="cal-head"><button type="button" class="btn cal-nav" id="calPrev" aria-label="Previous month">‹</button><div class="cal-title" id="calMonthLabel" aria-live="polite"></div><button type="button" class="btn cal-nav" id="calNext" aria-label="Next month">›</button></div><div class="cal-dow" aria-hidden="true"><span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span></div><div class="cal-grid" id="calGrid"></div><div class="cal-legend"><div class="cal-legend-items"><span class="t-test"><i class="cal-dot"></i>Test</span><span class="t-revision"><i class="cal-dot"></i>Revision</span><span class="t-study"><i class="cal-dot"></i>Study</span><span class="t-other"><i class="cal-dot"></i>Other</span></div><button type="button" class="btn ghost" id="calToday">JUMP TO TODAY</button></div></div>
+<div><div class="panel"><div class="panelhead"><h2>ADD EVENT</h2><span class="tiny">THIS DEVICE ONLY</span></div><div class="field"><label for="calTitle">TITLE</label><input id="calTitle" maxlength="80" autocomplete="off" placeholder="e.g. Physics unit test"></div><div class="fieldrow"><div class="field"><label for="calDate">DATE</label><input id="calDate" type="date" min="2000-01-01" max="2100-12-31"></div><div class="field"><label for="calType">TYPE</label><select id="calType"><option>Test</option><option>Revision</option><option>Study</option><option>Other</option></select></div></div><button type="button" class="btn primary cal-big" id="calAddBtn">＋ ADD EVENT</button></div>
+<div class="panel" style="margin-top:14px"><div class="panelhead"><h2 id="calDayTitle">SELECTED DAY</h2></div><div class="tasklist" id="calDayList"></div></div></div></div>
+<div class="panel" style="margin-top:14px"><div class="panelhead"><h2>UPCOMING EVENTS</h2><span class="tiny" id="calUpCount"></span></div><div class="tasklist" id="calUpcoming"></div><p class="notice">Calendar events are saved only on this device and browser. They are not synced to your account, other devices or other users, and they are not part of Export Backup. Clearing browser data removes them. Deleting an event never deletes study records.</p></div></section>
+<section class="section" id="countdown"><div class="hero"><div><div class="eyebrow">TIMERS // 008</div><h1>Exam <em>Countdown.</em></h1><p class="sub">Create countdowns for the dates that matter. You enter every date yourself.</p></div></div>
+<div class="cd-layout">
+<div class="panel"><div class="panelhead"><h2>NEW COUNTDOWN</h2><span class="tiny">THIS DEVICE ONLY</span></div><div class="field"><label for="cdName">EVENT NAME</label><input id="cdName" maxlength="80" autocomplete="off" placeholder="e.g. Physics mock test"></div><div class="field"><label for="cdDate">DATE</label><input id="cdDate" type="date" min="2000-01-01" max="2100-12-31"></div><button type="button" class="btn primary cal-big" id="cdAddBtn">＋ ADD COUNTDOWN</button><p class="notice">No exam date is pre-filled. For your exam, enter the date from the official announcement.</p></div>
+<div class="panel"><div class="panelhead"><h2>YOUR COUNTDOWNS</h2><span class="tiny" id="cdCount"></span></div><div class="tasklist" id="cdList"></div><p class="notice">Countdowns are saved only on this device and browser. They are not synced to your account, other devices or other users, and they are not part of Export Backup. Removing one never deletes study records.</p></div></div></section>
 <section class="section" id="account"><div class="hero"><div><div class="eyebrow">CLOUD LINK // 006</div><h1>Sync <em>Account.</em></h1><p class="sub">Sign in on each device to share one study record.</p></div></div>
 <div class="panel" id="authOut"><div class="panelhead"><h2>SIGN IN OR CREATE ACCOUNT</h2><span class="tiny">EMAIL + PASSWORD</span></div><div class="field"><label>EMAIL</label><input id="accEmail" type="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="you@example.com"></div><div class="field"><label>PASSWORD (6+ CHARACTERS)</label><input id="accPass" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"><label class="tiny" style="display:flex;gap:8px;align-items:center;margin-top:4px"><input type="checkbox" style="width:auto" onchange="$('accPass').type=this.checked?'text':'password'"> Show password</label></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="sbSignIn()">SIGN IN</button><button class="btn" onclick="sbSignUp()">CREATE ACCOUNT</button><button class="btn ghost" onclick="sbForgot()">FORGOT PASSWORD?</button></div><p class="notice" id="accMsg"></p><p class="notice">Your study data on this device is kept and merged into your account. Nothing is erased.</p></div>
 <div class="panel" id="authIn" style="display:none"><div class="panelhead"><h2>CONNECTED</h2><span class="tiny" id="accWho"></span></div><p class="sub" id="accStatus"></p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" onclick="sbSync(true)">SYNC NOW</button><button class="btn ghost" onclick="sbSignOut()">SIGN OUT</button></div><p class="notice">Changes sync automatically. Signing out keeps your data on this device.</p></div><div class="panel" id="authReset" style="display:none"><div class="panelhead"><h2>CHOOSE A NEW PASSWORD</h2><span class="tiny">RESET LINK VERIFIED</span></div><div class="field"><label>NEW PASSWORD (6+ CHARACTERS)</label><input id="newPass" type="password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"><label class="tiny" style="display:flex;gap:8px;align-items:center;margin-top:4px"><input type="checkbox" style="width:auto" onchange="$('newPass').type=this.checked?'text':'password'"> Show password</label></div><button class="btn primary" onclick="sbSetPassword()">SAVE NEW PASSWORD</button><p class="notice" id="resMsg"></p><p class="notice">Your study data is not touched. After saving, you are signed in and synced.</p></div></section>
@@ -149,6 +206,185 @@ async function sbSetPassword(){const pw=$('newPass').value;if(pw.length<6){sbRes
  if(typeof oldShow==='function')window.showPage=function(page){oldShow.apply(this,arguments);if(page!=='pomodoro')releaseWakeLock();else requestWakeLock()};
  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')requestWakeLock();else releaseWakeLock()});
  paint();
+})();
+</script>
+
+<script>
+/* Calendar & Countdown (beta).
+   Storage: calendar events and countdowns use their OWN localStorage keys (below). They are saved only on
+   the current device/browser; they are NOT part of the Supabase sync, NOT in Export Backup, and never touch
+   the study-data key 'system-neet-hunter-v1' or the auth keys. Everything here is wrapped in one function
+   so it adds no global variables. */
+(function(){
+'use strict';
+const EV_KEY='system-neet-calendar-events-v1',CD_KEY='system-neet-countdowns-v1';
+const TYPES=['Test','Revision','Study','Other'];
+const MAX_EVENTS=500,MAX_CD=50,TEXT_MAX=80;
+const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+const g=id=>document.getElementById(id);
+if(!g('calGrid')||!g('cdList')||!g('nextUpBody'))return;
+const say=m=>{try{if(typeof window.toast==='function')window.toast(m)}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pad=n=>String(n).padStart(2,'0');
+const keyOf=d=>d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+const todayStr=()=>keyOf(new Date());
+function parseKey(s){
+  if(typeof s!=='string')return null;
+  const m=/^(\d{4})-(\d{2})-(\d{2})$/.exec(s);if(!m)return null;
+  const y=+m[1],mo=+m[2],d=+m[3];if(y<2000||y>2100)return null;
+  const dt=new Date(y,mo-1,d);
+  if(dt.getFullYear()!==y||dt.getMonth()!==mo-1||dt.getDate()!==d)return null;
+  return {y,m:mo,d,date:dt};
+}
+function dayDiff(s){const p=parseKey(s),n=new Date();return Math.round((Date.UTC(p.y,p.m-1,p.d)-Date.UTC(n.getFullYear(),n.getMonth(),n.getDate()))/86400000)}
+function fmt(s){const p=parseKey(s);return p?p.date.toLocaleDateString(undefined,{weekday:'short',day:'numeric',month:'short',year:'numeric'}):''}
+function rel(s){const d=dayDiff(s);if(d===0)return 'Today';if(d===1)return 'Tomorrow';if(d>1)return 'In '+d+' days';return d===-1?'Yesterday':(-d)+' days ago'}
+const cleanText=s=>String(s==null?'':s).replace(/\s+/g,' ').trim().slice(0,TEXT_MAX);
+const cleanId=s=>String(s==null?'':s).replace(/[^A-Za-z0-9_-]/g,'').slice(0,40);
+const newId=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+function vEvent(x){if(!x||typeof x!=='object')return null;const id=cleanId(x.id),title=cleanText(x.title);if(!id||!title||!parseKey(x.date))return null;return {id,title,date:x.date,type:TYPES.indexOf(x.type)>-1?x.type:'Other',createdAt:Number(x.createdAt)||0}}
+function vCd(x){if(!x||typeof x!=='object')return null;const id=cleanId(x.id),name=cleanText(x.name);if(!id||!name||!parseKey(x.date))return null;return {id,name,date:x.date,createdAt:Number(x.createdAt)||0}}
+function load(key,validate){
+  let raw=null;
+  try{raw=localStorage.getItem(key)}catch(e){return []}
+  if(!raw)return [];
+  try{
+    const data=JSON.parse(raw);
+    const arr=Array.isArray(data)?data:(data&&Array.isArray(data.items)?data.items:null);
+    if(!arr)throw new Error('unexpected format');
+    const out=[],seen={};
+    arr.forEach(x=>{const v=validate(x);if(v&&!seen[v.id]){seen[v.id]=1;out.push(v)}});
+    return out;
+  }catch(e){
+    try{if(!localStorage.getItem(key+'-corrupt-backup'))localStorage.setItem(key+'-corrupt-backup',raw)}catch(_){}
+    return [];
+  }
+}
+function persist(key,items){try{localStorage.setItem(key,JSON.stringify({version:1,items:items}));return true}catch(e){return false}}
+let events=load(EV_KEY,vEvent),countdowns=load(CD_KEY,vCd);
+const now0=new Date();
+let viewY=now0.getFullYear(),viewM=now0.getMonth(),selected=todayStr(),lastToday=selected;
+const byDate=(a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.createdAt-b.createdAt);
+const locks={};
+function lock(name,btn){if(locks[name])return false;locks[name]=true;if(btn)btn.disabled=true;setTimeout(()=>{locks[name]=false;if(btn)btn.disabled=false},700);return true}
+
+/* ---------- Calendar ---------- */
+function renderCalendar(){
+  const startDow=new Date(viewY,viewM,1).getDay(),dim=new Date(viewY,viewM+1,0).getDate(),today=todayStr(),map={};
+  events.forEach(e=>{(map[e.date]=map[e.date]||[]).push(e)});
+  g('calMonthLabel').textContent=MONTHS[viewM]+' '+viewY;
+  let h='';
+  for(let i=0;i<startDow;i++)h+='<div class="cal-blank"></div>';
+  for(let d=1;d<=dim;d++){
+    const k=viewY+'-'+pad(viewM+1)+'-'+pad(d),list=map[k]||[],types=[];
+    list.forEach(e=>{if(types.indexOf(e.type)<0)types.push(e.type)});
+    const label=d+' '+MONTHS[viewM]+' '+viewY+(k===today?', today':'')+(list.length?', '+list.length+(list.length===1?' event':' events'):'');
+    h+='<button type="button" class="cal-cell'+(k===today?' today':'')+(k===selected?' selected':'')+'" data-date="'+k+'" aria-pressed="'+(k===selected)+'" aria-label="'+esc(label)+'">'+d+'<span class="cal-dots">'+types.map(t=>'<i class="cal-dot t-'+t.toLowerCase()+'"></i>').join('')+'</span></button>';
+  }
+  g('calGrid').innerHTML=h;
+}
+function eventRow(e,showDate){
+  return '<div class="task"><div class="tasktext"><strong>'+esc(e.title)+'</strong><div class="tiny">'+(showDate?esc(fmt(e.date))+' · ':'')+esc(rel(e.date))+'</div></div><span class="tag cal-tag t-'+e.type.toLowerCase()+'">'+esc(e.type.toUpperCase())+'</span><button type="button" class="cal-del" data-del-event="'+esc(e.id)+'" aria-label="Delete event '+esc(e.title)+'">×</button></div>';
+}
+function renderDay(){
+  g('calDayTitle').textContent='EVENTS · '+fmt(selected).toUpperCase();
+  const list=events.filter(e=>e.date===selected).sort(byDate);
+  g('calDayList').innerHTML=list.length?list.map(e=>eventRow(e,false)).join(''):'<div class="empty">No events on this day. Use the form above to add one.</div>';
+}
+function renderUpcoming(){
+  const up=events.filter(e=>dayDiff(e.date)>=0).sort(byDate);
+  g('calUpCount').textContent=up.length?up.length+(up.length===1?' EVENT':' EVENTS'):'';
+  g('calUpcoming').innerHTML=up.length?up.slice(0,30).map(e=>eventRow(e,true)).join('')+(up.length>30?'<p class="notice">Showing the next 30 events.</p>':''):'<div class="empty">No upcoming events. Pick a date and add a test, revision block or study goal.</div>';
+}
+function shiftMonth(n){const d=new Date(viewY,viewM+n,1);if(d.getFullYear()<2000||d.getFullYear()>2100)return;viewY=d.getFullYear();viewM=d.getMonth();renderCalendar()}
+function addEvent(){
+  const btn=g('calAddBtn'),title=cleanText(g('calTitle').value),date=g('calDate').value,type=g('calType').value;
+  if(!title){say('Enter an event title.');g('calTitle').focus();return}
+  if(!parseKey(date)){say('Choose a valid date between the years 2000 and 2100.');return}
+  if(TYPES.indexOf(type)<0){say('Choose an event type.');return}
+  if(events.length>=MAX_EVENTS){say('Event limit reached. Delete some old events first.');return}
+  if(events.some(e=>e.date===date&&e.type===type&&e.title.toLowerCase()===title.toLowerCase())){say('That event is already saved.');return}
+  if(!lock('ev',btn))return;
+  const next=events.concat([{id:newId('ev_'),title:title,date:date,type:type,createdAt:Date.now()}]);
+  if(!persist(EV_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
+  events=next;g('calTitle').value='';
+  const p=parseKey(date);selected=date;viewY=p.y;viewM=p.m-1;
+  renderAll();say('Event added.');
+}
+function deleteEvent(id){
+  const e=events.find(x=>x.id===id);if(!e)return;
+  if(!confirm('Delete this event?\n\n'+e.title+'\n\nYour study records are not affected.'))return;
+  const next=events.filter(x=>x.id!==id);
+  if(!persist(EV_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
+  events=next;renderAll();say('Event deleted.');
+}
+
+/* ---------- Countdown ---------- */
+function cdInfo(c){const d=dayDiff(c.date);if(d===0)return {big:'Today',small:'IT IS TODAY',cls:'today'};if(d>0)return {big:String(d),small:d===1?'DAY REMAINING':'DAYS REMAINING',cls:''};const n=-d;return {big:'Passed',small:(n===1?'1 DAY AGO':n+' DAYS AGO'),cls:'passed'}}
+function renderCountdowns(){
+  g('cdCount').textContent=countdowns.length?countdowns.length+(countdowns.length===1?' COUNTDOWN':' COUNTDOWNS'):'';
+  const up=countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate),past=countdowns.filter(c=>dayDiff(c.date)<0).sort((a,b)=>byDate(b,a));
+  const all=up.concat(past);
+  g('cdList').innerHTML=all.length?all.map(c=>{const i=cdInfo(c);return '<div class="cd-card '+i.cls+'"><div class="cd-main"><div class="cd-name">'+esc(c.name)+'</div><div class="tiny">'+esc(fmt(c.date))+'</div></div><div class="cd-count"><strong>'+esc(i.big)+'</strong><span>'+esc(i.small)+'</span></div><button type="button" class="cal-del" data-del-cd="'+esc(c.id)+'" aria-label="Remove countdown '+esc(c.name)+'">×</button></div>'}).join(''):'<div class="empty">No countdowns yet. Add the name and date of an event you are working toward.</div>';
+}
+function addCountdown(){
+  const btn=g('cdAddBtn'),name=cleanText(g('cdName').value),date=g('cdDate').value;
+  if(!name){say('Enter an event name.');g('cdName').focus();return}
+  if(!parseKey(date)){say('Choose a valid date between the years 2000 and 2100.');return}
+  if(countdowns.length>=MAX_CD){say('Countdown limit reached. Remove an old one first.');return}
+  if(countdowns.some(c=>c.date===date&&c.name.toLowerCase()===name.toLowerCase())){say('That countdown already exists.');return}
+  if(!lock('cd',btn))return;
+  const next=countdowns.concat([{id:newId('cd_'),name:name,date:date,createdAt:Date.now()}]);
+  if(!persist(CD_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
+  countdowns=next;g('cdName').value='';g('cdDate').value='';
+  renderAll();say('Countdown added.');
+}
+function deleteCountdown(id){
+  const c=countdowns.find(x=>x.id===id);if(!c)return;
+  if(!confirm('Remove this countdown?\n\n'+c.name+'\n\nYour study records are not affected.'))return;
+  const next=countdowns.filter(x=>x.id!==id);
+  if(!persist(CD_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
+  countdowns=next;renderAll();say('Countdown removed.');
+}
+
+/* ---------- Dashboard widget ---------- */
+function renderNext(){
+  const cd=countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate)[0];
+  const evs=events.filter(e=>dayDiff(e.date)>=0).sort(byDate).slice(0,3);
+  let left;
+  if(cd){const i=cdInfo(cd);left='<div class="eyebrow">NEXT COUNTDOWN</div><div class="nu-name">'+esc(cd.name)+'</div><div class="nu-big">'+esc(i.big)+(i.cls==='today'?'':'<small>'+(dayDiff(cd.date)===1?'day left':'days left')+'</small>')+'</div><div class="tiny">'+esc(fmt(cd.date))+'</div>'}
+  else left='<div class="eyebrow">NEXT COUNTDOWN</div><div class="tiny" style="margin-top:8px">No countdown set yet. Add your exam date in Countdown.</div>';
+  const right='<div class="eyebrow">UPCOMING EVENTS</div>'+(evs.length?evs.map(e=>'<div class="nu-ev"><span class="tag cal-tag t-'+e.type.toLowerCase()+'">'+esc(e.type.toUpperCase())+'</span><span class="nu-ev-title">'+esc(e.title)+'</span><span class="tiny">'+esc(rel(e.date))+'</span></div>').join(''):'<div class="tiny" style="margin-top:8px">Nothing scheduled. Add a test or revision block in Calendar.</div>');
+  g('nextUpBody').innerHTML='<div class="nu-wrap"><div class="nu-box">'+left+'</div><div class="nu-box">'+right+'</div></div>';
+}
+
+function renderAll(){renderCalendar();renderDay();renderUpcoming();renderCountdowns();renderNext();lastToday=todayStr()}
+
+/* ---------- Events (each listener is attached exactly once) ---------- */
+g('calGrid').addEventListener('click',ev=>{const b=ev.target.closest('[data-date]');if(!b||!parseKey(b.dataset.date))return;selected=b.dataset.date;g('calDate').value=selected;renderCalendar();renderDay()});
+g('calPrev').addEventListener('click',()=>shiftMonth(-1));
+g('calNext').addEventListener('click',()=>shiftMonth(1));
+g('calToday').addEventListener('click',()=>{const n=new Date();viewY=n.getFullYear();viewM=n.getMonth();selected=todayStr();g('calDate').value=selected;renderCalendar();renderDay()});
+g('calDate').addEventListener('change',()=>{const v=g('calDate').value,p=parseKey(v);if(!p)return;selected=v;viewY=p.y;viewM=p.m-1;renderCalendar();renderDay()});
+g('calAddBtn').addEventListener('click',addEvent);
+g('calTitle').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();addEvent()}});
+const onDelEvent=ev=>{const b=ev.target.closest('[data-del-event]');if(b)deleteEvent(b.dataset.delEvent)};
+g('calDayList').addEventListener('click',onDelEvent);
+g('calUpcoming').addEventListener('click',onDelEvent);
+g('cdAddBtn').addEventListener('click',addCountdown);
+g('cdName').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();addCountdown()}});
+g('cdList').addEventListener('click',ev=>{const b=ev.target.closest('[data-del-cd]');if(b)deleteCountdown(b.dataset.delCd)});
+g('nextUpPanel').addEventListener('click',ev=>{const b=ev.target.closest('[data-go]');if(b&&typeof window.showPage==='function')window.showPage(b.dataset.go)});
+
+/* Refresh when a new page is shown, when the tab becomes visible again, at midnight rollover, and when another tab edits the data. */
+const prevShow=window.showPage;
+if(typeof prevShow==='function')window.showPage=function(page){const r=prevShow.apply(this,arguments);try{if(page==='calendar'||page==='countdown'||page==='dashboard')renderAll()}catch(e){}return r};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderAll()});
+setInterval(()=>{if(todayStr()!==lastToday)renderAll()},60000);
+window.addEventListener('storage',e=>{if(e.key===null||e.key===EV_KEY||e.key===CD_KEY){events=load(EV_KEY,vEvent);countdowns=load(CD_KEY,vCd);renderAll()}});
+
+g('calDate').value=selected;
+renderAll();
 })();
 </script>
 
