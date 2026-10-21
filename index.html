@@ -84,6 +84,15 @@ body.study-dnd .quote-banner,body.study-dnd .sidebar-note{display:none}body.stud
 @media(max-width:480px){.cal-cell{font-size:13px;border-radius:7px}.cal-dow,.cal-grid{gap:3px}.cd-count strong{font-size:26px}}
 body.amoled .cal-cell,body.amoled .cd-card,body.amoled .nu-box{background:rgba(0,0,0,.94)}
 body.amoled .cal-cell.today{background:#001c33}body.amoled .cal-cell.selected{background:#06233d}
+
+/* sync status row and edit buttons */
+[hidden]{display:none!important}
+.cs-row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;margin:-6px 0 14px;padding:9px 12px;border:1px solid #123650;border-radius:10px;background:#041327bd}
+.cs-text{flex:1;min-width:180px;font-size:11px;line-height:1.45;color:var(--muted)}
+.cs-text.ok{color:var(--green)}.cs-text.bad{color:var(--red)}.cs-text.busy{color:var(--cyan)}
+.cs-row .btn{min-height:38px;padding:8px 12px}
+.cal-del.cal-edit:hover{color:var(--cyan);border-color:var(--cyan)}
+body.amoled .cs-row{background:rgba(0,0,0,.94)}
 </style></head>
 <body><div class="app">
 <header class="topbar"><div class="brand"><div class="sigil">S</div><div><div class="brandname">THE <span>SYSTEM</span></div><div class="eyebrow">NEET HUNTER // PERSONAL COMMAND CENTER</div></div></div><div class="topright"><div class="date" id="today"></div><div class="rank" id="syncChip" style="cursor:pointer" onclick="showPage('account')">☁ LOCAL ONLY</div><div class="rank" id="topRank">RANK // E</div><div class="system-toggles" aria-label="Study display controls"><button type="button" class="system-toggle" id="alwaysOnToggle" aria-pressed="false"><span class="led"></span> ALWAYS ON <span id="alwaysOnState">OFF</span></button><button type="button" class="system-toggle" id="amoledToggle" aria-pressed="false"><span class="led"></span> AMOLED <span id="amoledState">OFF</span></button><button type="button" class="system-toggle" id="studyDndToggle" aria-pressed="true"><span class="led"></span> STUDY DND <span id="studyDndState">ON</span></button></div></div></header>
@@ -101,15 +110,17 @@ body.amoled .cal-cell.today{background:#001c33}body.amoled .cal-cell.selected{ba
 <section class="section" id="subjects"><div class="hero"><div><div class="eyebrow">TRAINING ATTRIBUTES // 003</div><h1>Subject <em>Stats.</em></h1><p class="sub">Set approximate completion percentages. Update them when your work changes.</p></div></div><div class="subjectcards" id="subjectCards"></div><p class="notice">These percentages are yours to set; nothing is pre-filled as completed.</p></section>
 <section class="section" id="analytics"><div class="hero"><div><div class="eyebrow">HISTORY & CONSISTENCY // 004</div><h1>Progress <em>Log.</em></h1><p class="sub">A simple record of effort, not a judgment of your worth.</p></div></div><div class="grid2"><div class="panel"><div class="panelhead"><h2>LAST 7 DAYS</h2><span class="tiny">HOURS LOGGED</span></div><div class="weekgrid" id="weekGrid"></div></div><div class="panel"><div class="panelhead"><h2>ALL-TIME TOTALS</h2></div><div id="subjectTotals"></div></div></div><div class="panel"><div class="panelhead"><h2>RECENT SESSIONS</h2><button class="btn ghost" onclick="exportData()">EXPORT BACKUP</button></div><div id="sessionList"></div><p class="notice">Export creates a JSON backup you can keep. This site stores data locally in this browser.</p></div></section>
 <section class="section" id="calendar"><div class="hero"><div><div class="eyebrow">SCHEDULE // 007</div><h1>Study <em>Calendar.</em></h1><p class="sub">Plan tests, revision blocks and study goals. Tap a date to review it or add an event.</p></div></div>
+<div class="cs-row"><span class="cs-text" id="calSyncStatus" role="status">☁ Checking sync…</span><button type="button" class="btn" data-sync-now hidden>SYNC NOW</button><button type="button" class="btn" data-sign-in data-go="account">SIGN IN TO SYNC</button></div>
 <div class="cal-layout">
 <div class="panel"><div class="cal-head"><button type="button" class="btn cal-nav" id="calPrev" aria-label="Previous month">‹</button><div class="cal-title" id="calMonthLabel" aria-live="polite"></div><button type="button" class="btn cal-nav" id="calNext" aria-label="Next month">›</button></div><div class="cal-dow" aria-hidden="true"><span>SUN</span><span>MON</span><span>TUE</span><span>WED</span><span>THU</span><span>FRI</span><span>SAT</span></div><div class="cal-grid" id="calGrid"></div><div class="cal-legend"><div class="cal-legend-items"><span class="t-test"><i class="cal-dot"></i>Test</span><span class="t-revision"><i class="cal-dot"></i>Revision</span><span class="t-study"><i class="cal-dot"></i>Study</span><span class="t-other"><i class="cal-dot"></i>Other</span></div><button type="button" class="btn ghost" id="calToday">JUMP TO TODAY</button></div></div>
-<div><div class="panel"><div class="panelhead"><h2>ADD EVENT</h2><span class="tiny">THIS DEVICE ONLY</span></div><div class="field"><label for="calTitle">TITLE</label><input id="calTitle" maxlength="80" autocomplete="off" placeholder="e.g. Physics unit test"></div><div class="fieldrow"><div class="field"><label for="calDate">DATE</label><input id="calDate" type="date" min="2000-01-01" max="2100-12-31"></div><div class="field"><label for="calType">TYPE</label><select id="calType"><option>Test</option><option>Revision</option><option>Study</option><option>Other</option></select></div></div><button type="button" class="btn primary cal-big" id="calAddBtn">＋ ADD EVENT</button></div>
+<div><div class="panel"><div class="panelhead"><h2 id="calFormTitle">ADD EVENT</h2><span class="tiny">ACCOUNT SYNC</span></div><div class="field"><label for="calTitle">TITLE</label><input id="calTitle" maxlength="80" autocomplete="off" placeholder="e.g. Physics unit test"></div><div class="fieldrow"><div class="field"><label for="calDate">DATE</label><input id="calDate" type="date" min="2000-01-01" max="2100-12-31"></div><div class="field"><label for="calType">TYPE</label><select id="calType"><option>Test</option><option>Revision</option><option>Study</option><option>Other</option></select></div></div><button type="button" class="btn primary cal-big" id="calAddBtn">＋ ADD EVENT</button><button type="button" class="btn ghost cal-big" id="calCancelEdit" style="margin-top:8px" hidden>CANCEL EDIT</button></div>
 <div class="panel" style="margin-top:14px"><div class="panelhead"><h2 id="calDayTitle">SELECTED DAY</h2></div><div class="tasklist" id="calDayList"></div></div></div></div>
-<div class="panel" style="margin-top:14px"><div class="panelhead"><h2>UPCOMING EVENTS</h2><span class="tiny" id="calUpCount"></span></div><div class="tasklist" id="calUpcoming"></div><p class="notice">Calendar events are saved only on this device and browser. They are not synced to your account, other devices or other users, and they are not part of Export Backup. Clearing browser data removes them. Deleting an event never deletes study records.</p></div></section>
+<div class="panel" style="margin-top:14px"><div class="panelhead"><h2>UPCOMING EVENTS</h2><span class="tiny" id="calUpCount"></span></div><div class="tasklist" id="calUpcoming"></div><p class="notice">When you are signed in, calendar events are saved to your account and appear on every device where you sign in. This device keeps a copy so the page loads fast and works offline. Events are private to your account and are not part of Export Backup. Deleting an event never deletes study records.</p></div></section>
 <section class="section" id="countdown"><div class="hero"><div><div class="eyebrow">TIMERS // 008</div><h1>Exam <em>Countdown.</em></h1><p class="sub">Create countdowns for the dates that matter. You enter every date yourself.</p></div></div>
+<div class="cs-row"><span class="cs-text" id="cdSyncStatus" role="status">☁ Checking sync…</span><button type="button" class="btn" data-sync-now hidden>SYNC NOW</button><button type="button" class="btn" data-sign-in data-go="account">SIGN IN TO SYNC</button></div>
 <div class="cd-layout">
-<div class="panel"><div class="panelhead"><h2>NEW COUNTDOWN</h2><span class="tiny">THIS DEVICE ONLY</span></div><div class="field"><label for="cdName">EVENT NAME</label><input id="cdName" maxlength="80" autocomplete="off" placeholder="e.g. Physics mock test"></div><div class="field"><label for="cdDate">DATE</label><input id="cdDate" type="date" min="2000-01-01" max="2100-12-31"></div><button type="button" class="btn primary cal-big" id="cdAddBtn">＋ ADD COUNTDOWN</button><p class="notice">No exam date is pre-filled. For your exam, enter the date from the official announcement.</p></div>
-<div class="panel"><div class="panelhead"><h2>YOUR COUNTDOWNS</h2><span class="tiny" id="cdCount"></span></div><div class="tasklist" id="cdList"></div><p class="notice">Countdowns are saved only on this device and browser. They are not synced to your account, other devices or other users, and they are not part of Export Backup. Removing one never deletes study records.</p></div></div></section>
+<div class="panel"><div class="panelhead"><h2 id="cdFormTitle">NEW COUNTDOWN</h2><span class="tiny">ACCOUNT SYNC</span></div><div class="field"><label for="cdName">EVENT NAME</label><input id="cdName" maxlength="80" autocomplete="off" placeholder="e.g. Physics mock test"></div><div class="field"><label for="cdDate">DATE</label><input id="cdDate" type="date" min="2000-01-01" max="2100-12-31"></div><button type="button" class="btn primary cal-big" id="cdAddBtn">＋ ADD COUNTDOWN</button><button type="button" class="btn ghost cal-big" id="cdCancelEdit" style="margin-top:8px" hidden>CANCEL EDIT</button><p class="notice">No exam date is pre-filled. For your exam, enter the date from the official announcement.</p></div>
+<div class="panel"><div class="panelhead"><h2>YOUR COUNTDOWNS</h2><span class="tiny" id="cdCount"></span></div><div class="tasklist" id="cdList"></div><p class="notice">When you are signed in, countdowns are saved to your account and appear on every device where you sign in. This device keeps a copy for fast loading and offline use. They are private to your account and are not part of Export Backup. Removing one never deletes study records.</p></div></div></section>
 <section class="section" id="account"><div class="hero"><div><div class="eyebrow">CLOUD LINK // 006</div><h1>Sync <em>Account.</em></h1><p class="sub">Sign in on each device to share one study record.</p></div></div>
 <div class="panel" id="authOut"><div class="panelhead"><h2>SIGN IN OR CREATE ACCOUNT</h2><span class="tiny">EMAIL + PASSWORD</span></div><div class="field"><label>EMAIL</label><input id="accEmail" type="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="you@example.com"></div><div class="field"><label>PASSWORD (6+ CHARACTERS)</label><input id="accPass" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"><label class="tiny" style="display:flex;gap:8px;align-items:center;margin-top:4px"><input type="checkbox" style="width:auto" onchange="$('accPass').type=this.checked?'text':'password'"> Show password</label></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="sbSignIn()">SIGN IN</button><button class="btn" onclick="sbSignUp()">CREATE ACCOUNT</button><button class="btn ghost" onclick="sbForgot()">FORGOT PASSWORD?</button></div><p class="notice" id="accMsg"></p><p class="notice">Your study data on this device is kept and merged into your account. Nothing is erased.</p></div>
 <div class="panel" id="authIn" style="display:none"><div class="panelhead"><h2>CONNECTED</h2><span class="tiny" id="accWho"></span></div><p class="sub" id="accStatus"></p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" onclick="sbSync(true)">SYNC NOW</button><button class="btn ghost" onclick="sbSignOut()">SIGN OUT</button></div><p class="notice">Changes sync automatically. Signing out keeps your data on this device.</p></div><div class="panel" id="authReset" style="display:none"><div class="panelhead"><h2>CHOOSE A NEW PASSWORD</h2><span class="tiny">RESET LINK VERIFIED</span></div><div class="field"><label>NEW PASSWORD (6+ CHARACTERS)</label><input id="newPass" type="password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"><label class="tiny" style="display:flex;gap:8px;align-items:center;margin-top:4px"><input type="checkbox" style="width:auto" onchange="$('newPass').type=this.checked?'text':'password'"> Show password</label></div><button class="btn primary" onclick="sbSetPassword()">SAVE NEW PASSWORD</button><p class="notice" id="resMsg"></p><p class="notice">Your study data is not touched. After saving, you are signed in and synced.</p></div></section>
@@ -210,16 +221,24 @@ async function sbSetPassword(){const pw=$('newPass').value;if(pw.length<6){sbRes
 </script>
 
 <script>
-/* Calendar & Countdown (beta).
-   Storage: calendar events and countdowns use their OWN localStorage keys (below). They are saved only on
-   the current device/browser; they are NOT part of the Supabase sync, NOT in Export Backup, and never touch
-   the study-data key 'system-neet-hunter-v1' or the auth keys. Everything here is wrapped in one function
-   so it adds no global variables. */
+/* Calendar & Countdown with cloud sync (beta).
+   CLOUD: one row per user in the Supabase table "calendar_countdown_data" (user_id, data jsonb, version, updated_at),
+   protected by Row Level Security (see supabase_calendar_sync.sql). It reuses the site's existing sign-in session
+   (sbSess / sbToken / SB_URL / SB_KEY) and does NOT touch the study_data table or any auth code.
+   MERGE: every event/countdown has an id and an updatedAt time. Deletions are kept as "tombstones" so a stale device
+   cannot bring a deleted item back. Newer edits win per item; items are never dropped just because a device is out of date.
+   CONFLICTS: writes are conditional on the row's version number. If another device saved first, this device re-reads,
+   merges and retries, so simultaneous changes from two devices are combined rather than overwritten.
+   LOCAL CACHE: localStorage keeps a per-account copy (system-neet-cal-v2-<user id>) so the pages load instantly and work
+   offline. The old v1 keys from the first Calendar release are only READ (once) and are never changed or deleted.
+   Everything is in one function, so no global variables are added. */
 (function(){
 'use strict';
-const EV_KEY='system-neet-calendar-events-v1',CD_KEY='system-neet-countdowns-v1';
+const TABLE='calendar_countdown_data';
+const LEGACY_EV='system-neet-calendar-events-v1',LEGACY_CD='system-neet-countdowns-v1';
+const CACHE_PREFIX='system-neet-cal-v2-';
 const TYPES=['Test','Revision','Study','Other'];
-const MAX_EVENTS=500,MAX_CD=50,TEXT_MAX=80;
+const MAX_EVENTS=500,MAX_CD=50,TEXT_MAX=80,TOMB_MAX_AGE=180*86400000;
 const MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
 const g=id=>document.getElementById(id);
 if(!g('calGrid')||!g('cdList')||!g('nextUpBody'))return;
@@ -242,36 +261,170 @@ function rel(s){const d=dayDiff(s);if(d===0)return 'Today';if(d===1)return 'Tomo
 const cleanText=s=>String(s==null?'':s).replace(/\s+/g,' ').trim().slice(0,TEXT_MAX);
 const cleanId=s=>String(s==null?'':s).replace(/[^A-Za-z0-9_-]/g,'').slice(0,40);
 const newId=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,8);
-function vEvent(x){if(!x||typeof x!=='object')return null;const id=cleanId(x.id),title=cleanText(x.title);if(!id||!title||!parseKey(x.date))return null;return {id,title,date:x.date,type:TYPES.indexOf(x.type)>-1?x.type:'Other',createdAt:Number(x.createdAt)||0}}
-function vCd(x){if(!x||typeof x!=='object')return null;const id=cleanId(x.id),name=cleanText(x.name);if(!id||!name||!parseKey(x.date))return null;return {id,name,date:x.date,createdAt:Number(x.createdAt)||0}}
-function load(key,validate){
-  let raw=null;
-  try{raw=localStorage.getItem(key)}catch(e){return []}
-  if(!raw)return [];
+
+/* ---------- Data model (fixed key order so models can be compared reliably) ---------- */
+const mkEvent=(id,title,date,type,createdAt,updatedAt)=>({id:id,title:title,date:date,type:type,createdAt:createdAt,updatedAt:updatedAt});
+const mkCd=(id,name,date,createdAt,updatedAt)=>({id:id,name:name,date:date,createdAt:createdAt,updatedAt:updatedAt});
+function vEvent(x){if(!x||typeof x!=='object')return null;const id=cleanId(x.id),title=cleanText(x.title);if(!id||!title||!parseKey(x.date))return null;const c=Number(x.createdAt)||0;return mkEvent(id,title,x.date,TYPES.indexOf(x.type)>-1?x.type:'Other',c,Number(x.updatedAt)||c)}
+function vCd(x){if(!x||typeof x!=='object')return null;const id=cleanId(x.id),name=cleanText(x.name);if(!id||!name||!parseKey(x.date))return null;const c=Number(x.createdAt)||0;return mkCd(id,name,x.date,c,Number(x.updatedAt)||c)}
+const emptyModel=()=>({events:[],countdowns:[],deleted:{}});
+function cleanDeleted(d){const o={};if(d&&typeof d==='object'&&!Array.isArray(d))Object.keys(d).forEach(k=>{const t=Number(d[k]);if(/^[A-Za-z0-9_-]{1,40}$/.test(k)&&isFinite(t)&&t>0)o[k]=t});return o}
+function cleanModel(d){
+  if(!d||typeof d!=='object')return emptyModel();
+  const list=(arr,v)=>{const seen={};return (Array.isArray(arr)?arr:[]).map(v).filter(x=>{if(!x||seen[x.id])return false;seen[x.id]=1;return true})};
+  return {events:list(d.events,vEvent),countdowns:list(d.countdowns,vCd),deleted:cleanDeleted(d.deleted)};
+}
+const pickBetter=(a,b)=>(a.updatedAt>b.updatedAt||(a.updatedAt===b.updatedAt&&JSON.stringify(a)>JSON.stringify(b)))?a:b;
+function mergeModels(a,b){
+  const del={},cut=Date.now()-TOMB_MAX_AGE;
+  [a.deleted,b.deleted].forEach(d=>Object.keys(d||{}).forEach(k=>{const t=Number(d[k])||0;if(t>(del[k]||0))del[k]=t}));
+  const mix=(x,y)=>{const m={};x.concat(y).forEach(i=>{m[i.id]=m[i.id]?pickBetter(i,m[i.id]):i});return Object.keys(m).sort().map(k=>m[k]).filter(i=>!(i.id in del)||i.updatedAt>del[i.id])};
+  const out={events:mix(a.events,b.events),countdowns:mix(a.countdowns,b.countdowns),deleted:{}};
+  Object.keys(del).sort().forEach(k=>{if(del[k]>=cut)out.deleted[k]=del[k]});
+  return out;
+}
+const byId=(a,b)=>a.id<b.id?-1:a.id>b.id?1:0;
+const norm=m=>JSON.stringify([m.events.slice().sort(byId),m.countdowns.slice().sort(byId),Object.keys(m.deleted).sort().map(k=>[k,m.deleted[k]])]);
+const toRemote=m=>({v:2,events:m.events,countdowns:m.countdowns,deleted:m.deleted});
+const isEmpty=m=>!m.events.length&&!m.countdowns.length&&!Object.keys(m.deleted).length;
+const byDate=(a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.createdAt-b.createdAt);
+
+/* ---------- Local cache (a copy only; the account row in Supabase is the shared source) ---------- */
+const lsGet=k=>{try{return localStorage.getItem(k)}catch(e){return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,v);return true}catch(e){return false}};
+const cacheKey=o=>CACHE_PREFIX+o;
+function readCache(o){
+  const raw=lsGet(cacheKey(o));if(!raw)return null;
+  try{const d=JSON.parse(raw);if(d&&typeof d==='object'&&d.version===2)return d}catch(e){}
+  if(!lsGet(cacheKey(o)+'-corrupt-backup'))lsSet(cacheKey(o)+'-corrupt-backup',raw);
+  return null;
+}
+function readLegacy(key,validate){
+  const raw=lsGet(key);if(!raw)return [];
+  try{const d=JSON.parse(raw);const arr=Array.isArray(d)?d:(d&&Array.isArray(d.items)?d.items:[]);const seen={},out=[];arr.forEach(x=>{const v=validate(x);if(v&&!seen[v.id]){seen[v.id]=1;out.push(v)}});return out}catch(e){return []}
+}
+function ensureLocal(){
+  const c=readCache('local');if(c)return c;
+  const m=emptyModel();m.events=readLegacy(LEGACY_EV,vEvent);m.countdowns=readLegacy(LEGACY_CD,vCd);
+  const rec=Object.assign({version:2,adoptedBy:null},m);
+  lsSet(cacheKey('local'),JSON.stringify(rec));
+  return rec;
+}
+let owner='local',model=emptyModel(),localAdoptedBy=null;
+function uidNow(){try{return (typeof sbSess!=='undefined'&&sbSess&&sbSess.uid)?cleanId(sbSess.uid):null}catch(e){return null}}
+function saveModel(){
+  const extra=owner==='local'?{adoptedBy:localAdoptedBy}:{};
+  return lsSet(cacheKey(owner),JSON.stringify(Object.assign({version:2,events:model.events,countdowns:model.countdowns,deleted:model.deleted},extra)));
+}
+function setLocalAdopted(uid){const lc=readCache('local');if(lc){lc.adoptedBy=uid;lsSet(cacheKey('local'),JSON.stringify(lc))}localAdoptedBy=uid}
+function loadOwner(o){
+  owner=o;
+  const lc=ensureLocal();localAdoptedBy=lc.adoptedBy||null;
+  if(o==='local'){model=cleanModel(lc);return}
+  model=cleanModel(readCache(o));
+  if(!localAdoptedBy||localAdoptedBy===o){
+    /* Additively bring data made on this device before sign-in into the account. Nothing is removed from the local copy. */
+    const lm=cleanModel(lc);
+    if(!isEmpty(lm))model=mergeModels(model,lm);
+    if(!localAdoptedBy)setLocalAdopted(o);
+  }
+  saveModel();
+}
+
+/* ---------- Cloud ---------- */
+let syncing=false,again=false,syncTimer=null,blockedUntil=0,lastSyncAt=null,status={kind:'off',msg:''};
+async function rest(method,qs,body,extra){
+  if(typeof sbToken!=='function'||typeof SB_URL==='undefined'||typeof SB_KEY==='undefined')throw new Error('Account sync is not available.');
+  const t=await sbToken();
+  const r=await fetch(SB_URL+'/rest/v1/'+TABLE+qs,{method:method,headers:Object.assign({apikey:SB_KEY,Authorization:'Bearer '+t,'Content-Type':'application/json'},extra||{}),body:body?JSON.stringify(body):undefined});
+  const txt=await r.text();let j=null;try{j=txt?JSON.parse(txt):null}catch(e){}
+  if(!r.ok){const err=new Error((j&&(j.message||j.msg))||txt||('HTTP '+r.status));err.status=r.status;err.code=j&&j.code;throw err}
+  return j;
+}
+function describe(e){
+  const s=(e.code||'')+' '+(e.message||'');
+  if(e.status===404||/PGRST205|42P01|does not exist|Could not find the table/i.test(s)&&!/column/i.test(s))return {kind:'setup',msg:'The cloud table is not set up yet. Run the SQL migration in Supabase (see the instructions), then tap Sync now.'};
+  if(e.status===403||/42501|permission denied|row-level security/i.test(s))return {kind:'setup',msg:'Supabase refused access. Run the SQL (grants and security policies) in Supabase, then tap Sync now.'};
+  if(/column/i.test(s))return {kind:'setup',msg:'The cloud table is missing a column. Run the SQL migration in Supabase, then tap Sync now.'};
+  if(e instanceof TypeError||/failed to fetch|network|load failed/i.test(s))return {kind:'err',msg:'No connection to the server.'};
+  return {kind:'err',msg:String(e.message||e).slice(0,160)};
+}
+function setStatus(kind,msg){status={kind:kind,msg:msg||''};paintStatus()}
+function paintStatus(){
+  const signed=owner!=='local';let text,cls='';
+  if(!signed){text='☁ LOCAL ONLY. Sign in on the Sync Account tab to keep these on every device.'}
+  else if(status.kind==='busy'){text='☁ Syncing…';cls='busy'}
+  else if(status.kind==='ok'){text='☁ SYNCED'+(lastSyncAt?' · last synced '+lastSyncAt.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):'');cls='ok'}
+  else if(status.kind==='setup'){text='☁ SETUP NEEDED. '+status.msg+' Your data is safe on this device.';cls='bad'}
+  else if(status.kind==='err'){text='☁ SYNC PROBLEM: '+status.msg+' Your changes are safe on this device and will retry.';cls='bad'}
+  else{text='☁ Signed in. Waiting to sync…'}
+  ['calSyncStatus','cdSyncStatus'].forEach(id=>{const el=g(id);if(el){el.textContent=text;el.className='cs-text'+(cls?' '+cls:'')}});
+  document.querySelectorAll('[data-sync-now]').forEach(b=>{b.hidden=!signed});
+  document.querySelectorAll('[data-sign-in]').forEach(b=>{b.hidden=signed});
+}
+async function cloudSync(manual){
+  const uid=owner==='local'?null:owner;
+  if(!uid||uid!==uidNow())return;
+  if(!manual&&Date.now()<blockedUntil)return;
+  if(syncing){again=true;return}
+  syncing=true;setStatus('busy');
+  const before=norm(model);
   try{
-    const data=JSON.parse(raw);
-    const arr=Array.isArray(data)?data:(data&&Array.isArray(data.items)?data.items:null);
-    if(!arr)throw new Error('unexpected format');
-    const out=[],seen={};
-    arr.forEach(x=>{const v=validate(x);if(v&&!seen[v.id]){seen[v.id]=1;out.push(v)}});
-    return out;
+    let done=false,merged=null;
+    for(let n=0;n<5&&!done;n++){
+      const rows=await rest('GET','?select=data,version&user_id=eq.'+encodeURIComponent(uid)+'&limit=1');
+      if(owner!==uid)return;
+      const row=rows&&rows[0],remote=cleanModel(row&&row.data);
+      merged=mergeModels(model,remote);
+      if(!row){
+        if(isEmpty(merged)){done=true;break}
+        try{await rest('POST','',{user_id:uid,data:toRemote(merged),version:1},{Prefer:'return=minimal'});done=true}
+        catch(e){if(e.status===409||e.code==='23505')continue;throw e}
+      }else if(norm(merged)===norm(remote)){done=true}
+      else{
+        const v=Number(row.version)||1;
+        const upd=await rest('PATCH','?user_id=eq.'+encodeURIComponent(uid)+'&version=eq.'+v,{data:toRemote(merged),version:v+1,updated_at:new Date().toISOString()},{Prefer:'return=representation'});
+        if(Array.isArray(upd)&&upd.length)done=true;
+      }
+    }
+    if(!done)throw new Error('Another device was saving at the same moment. Retrying shortly.');
+    if(owner!==uid)return;
+    const latest=mergeModels(model,merged);
+    if(norm(latest)!==norm(merged))again=true;
+    model=latest;saveModel();
+    lastSyncAt=new Date();blockedUntil=0;setStatus('ok');
+    if(norm(model)!==before)renderAll();
+    if(manual)say('Synced.');
   }catch(e){
-    try{if(!localStorage.getItem(key+'-corrupt-backup'))localStorage.setItem(key+'-corrupt-backup',raw)}catch(_){}
-    return [];
+    const d=describe(e);
+    if(d.kind==='setup')blockedUntil=Date.now()+300000;
+    setStatus(d.kind,d.msg);
+    if(manual)say(d.kind==='setup'?'Cloud setup is needed. See the message on this page.':'Sync problem. Your data is safe on this device.');
+  }finally{
+    syncing=false;
+    if(again){again=false;setTimeout(()=>cloudSync(false),400)}
   }
 }
-function persist(key,items){try{localStorage.setItem(key,JSON.stringify({version:1,items:items}));return true}catch(e){return false}}
-let events=load(EV_KEY,vEvent),countdowns=load(CD_KEY,vCd);
+function scheduleSync(){if(owner==='local')return;clearTimeout(syncTimer);blockedUntil=0;syncTimer=setTimeout(()=>cloudSync(false),600)}
+function afterChange(msg){
+  const ok=saveModel();
+  renderAll();
+  if(!ok)say(owner==='local'?'Could not save on this device. Browser storage is full or blocked.':'Saved to your account when online. This device could not keep a copy.');
+  else say(msg);
+  scheduleSync();
+}
+
+/* ---------- Page state ---------- */
+let editingEv=null,editingCd=null;
 const now0=new Date();
 let viewY=now0.getFullYear(),viewM=now0.getMonth(),selected=todayStr(),lastToday=selected;
-const byDate=(a,b)=>a.date<b.date?-1:a.date>b.date?1:(a.createdAt-b.createdAt);
 const locks={};
 function lock(name,btn){if(locks[name])return false;locks[name]=true;if(btn)btn.disabled=true;setTimeout(()=>{locks[name]=false;if(btn)btn.disabled=false},700);return true}
 
 /* ---------- Calendar ---------- */
 function renderCalendar(){
   const startDow=new Date(viewY,viewM,1).getDay(),dim=new Date(viewY,viewM+1,0).getDate(),today=todayStr(),map={};
-  events.forEach(e=>{(map[e.date]=map[e.date]||[]).push(e)});
+  model.events.forEach(e=>{(map[e.date]=map[e.date]||[]).push(e)});
   g('calMonthLabel').textContent=MONTHS[viewM]+' '+viewY;
   let h='';
   for(let i=0;i<startDow;i++)h+='<div class="cal-blank"></div>';
@@ -284,107 +437,159 @@ function renderCalendar(){
   g('calGrid').innerHTML=h;
 }
 function eventRow(e,showDate){
-  return '<div class="task"><div class="tasktext"><strong>'+esc(e.title)+'</strong><div class="tiny">'+(showDate?esc(fmt(e.date))+' · ':'')+esc(rel(e.date))+'</div></div><span class="tag cal-tag t-'+e.type.toLowerCase()+'">'+esc(e.type.toUpperCase())+'</span><button type="button" class="cal-del" data-del-event="'+esc(e.id)+'" aria-label="Delete event '+esc(e.title)+'">×</button></div>';
+  return '<div class="task"><div class="tasktext"><strong>'+esc(e.title)+'</strong><div class="tiny">'+(showDate?esc(fmt(e.date))+' · ':'')+esc(rel(e.date))+'</div></div><span class="tag cal-tag t-'+e.type.toLowerCase()+'">'+esc(e.type.toUpperCase())+'</span><button type="button" class="cal-del cal-edit" data-edit-event="'+esc(e.id)+'" aria-label="Edit event '+esc(e.title)+'">✎</button><button type="button" class="cal-del" data-del-event="'+esc(e.id)+'" aria-label="Delete event '+esc(e.title)+'">×</button></div>';
 }
 function renderDay(){
   g('calDayTitle').textContent='EVENTS · '+fmt(selected).toUpperCase();
-  const list=events.filter(e=>e.date===selected).sort(byDate);
+  const list=model.events.filter(e=>e.date===selected).sort(byDate);
   g('calDayList').innerHTML=list.length?list.map(e=>eventRow(e,false)).join(''):'<div class="empty">No events on this day. Use the form above to add one.</div>';
 }
 function renderUpcoming(){
-  const up=events.filter(e=>dayDiff(e.date)>=0).sort(byDate);
+  const up=model.events.filter(e=>dayDiff(e.date)>=0).sort(byDate);
   g('calUpCount').textContent=up.length?up.length+(up.length===1?' EVENT':' EVENTS'):'';
   g('calUpcoming').innerHTML=up.length?up.slice(0,30).map(e=>eventRow(e,true)).join('')+(up.length>30?'<p class="notice">Showing the next 30 events.</p>':''):'<div class="empty">No upcoming events. Pick a date and add a test, revision block or study goal.</div>';
 }
 function shiftMonth(n){const d=new Date(viewY,viewM+n,1);if(d.getFullYear()<2000||d.getFullYear()>2100)return;viewY=d.getFullYear();viewM=d.getMonth();renderCalendar()}
-function addEvent(){
-  const btn=g('calAddBtn'),title=cleanText(g('calTitle').value),date=g('calDate').value,type=g('calType').value;
+function endEditEvent(){editingEv=null;g('calTitle').value='';g('calAddBtn').textContent='＋ ADD EVENT';g('calFormTitle').textContent='ADD EVENT';g('calCancelEdit').hidden=true}
+function startEditEvent(id){
+  const e=model.events.find(x=>x.id===id);if(!e)return;
+  editingEv=id;g('calTitle').value=e.title;g('calDate').value=e.date;g('calType').value=e.type;
+  const p=parseKey(e.date);selected=e.date;viewY=p.y;viewM=p.m-1;
+  g('calAddBtn').textContent='✓ SAVE CHANGES';g('calFormTitle').textContent='EDIT EVENT';g('calCancelEdit').hidden=false;
+  renderCalendar();renderDay();
+  try{g('calTitle').scrollIntoView({behavior:'smooth',block:'center'});g('calTitle').focus()}catch(x){}
+}
+function saveEvent(){
+  const btn=g('calAddBtn'),title=cleanText(g('calTitle').value),date=g('calDate').value,type=g('calType').value,editing=editingEv;
   if(!title){say('Enter an event title.');g('calTitle').focus();return}
   if(!parseKey(date)){say('Choose a valid date between the years 2000 and 2100.');return}
   if(TYPES.indexOf(type)<0){say('Choose an event type.');return}
-  if(events.length>=MAX_EVENTS){say('Event limit reached. Delete some old events first.');return}
-  if(events.some(e=>e.date===date&&e.type===type&&e.title.toLowerCase()===title.toLowerCase())){say('That event is already saved.');return}
+  const old=editing?model.events.find(x=>x.id===editing):null;
+  if(editing&&!old){say('That event no longer exists.');endEditEvent();renderAll();return}
+  if(!editing&&model.events.length>=MAX_EVENTS){say('Event limit reached. Delete some old events first.');return}
+  if(model.events.some(e=>e.id!==editing&&e.date===date&&e.type===type&&e.title.toLowerCase()===title.toLowerCase())){say('That event is already saved.');return}
   if(!lock('ev',btn))return;
-  const next=events.concat([{id:newId('ev_'),title:title,date:date,type:type,createdAt:Date.now()}]);
-  if(!persist(EV_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
-  events=next;g('calTitle').value='';
+  const t=Date.now();
+  if(old){const upd=mkEvent(old.id,title,date,type,old.createdAt,Math.max(t,old.updatedAt+1));model.events=model.events.map(e=>e.id===old.id?upd:e)}
+  else model.events=model.events.concat([mkEvent(newId('ev_'),title,date,type,t,t)]);
   const p=parseKey(date);selected=date;viewY=p.y;viewM=p.m-1;
-  renderAll();say('Event added.');
+  endEditEvent();
+  afterChange(old?'Event updated.':'Event added.');
 }
 function deleteEvent(id){
-  const e=events.find(x=>x.id===id);if(!e)return;
+  const e=model.events.find(x=>x.id===id);if(!e)return;
   if(!confirm('Delete this event?\n\n'+e.title+'\n\nYour study records are not affected.'))return;
-  const next=events.filter(x=>x.id!==id);
-  if(!persist(EV_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
-  events=next;renderAll();say('Event deleted.');
+  model.events=model.events.filter(x=>x.id!==id);
+  model.deleted[id]=Math.max(Date.now(),e.updatedAt+1);
+  if(editingEv===id)endEditEvent();
+  afterChange('Event deleted.');
 }
 
 /* ---------- Countdown ---------- */
 function cdInfo(c){const d=dayDiff(c.date);if(d===0)return {big:'Today',small:'IT IS TODAY',cls:'today'};if(d>0)return {big:String(d),small:d===1?'DAY REMAINING':'DAYS REMAINING',cls:''};const n=-d;return {big:'Passed',small:(n===1?'1 DAY AGO':n+' DAYS AGO'),cls:'passed'}}
 function renderCountdowns(){
-  g('cdCount').textContent=countdowns.length?countdowns.length+(countdowns.length===1?' COUNTDOWN':' COUNTDOWNS'):'';
-  const up=countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate),past=countdowns.filter(c=>dayDiff(c.date)<0).sort((a,b)=>byDate(b,a));
+  g('cdCount').textContent=model.countdowns.length?model.countdowns.length+(model.countdowns.length===1?' COUNTDOWN':' COUNTDOWNS'):'';
+  const up=model.countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate),past=model.countdowns.filter(c=>dayDiff(c.date)<0).sort((a,b)=>byDate(b,a));
   const all=up.concat(past);
-  g('cdList').innerHTML=all.length?all.map(c=>{const i=cdInfo(c);return '<div class="cd-card '+i.cls+'"><div class="cd-main"><div class="cd-name">'+esc(c.name)+'</div><div class="tiny">'+esc(fmt(c.date))+'</div></div><div class="cd-count"><strong>'+esc(i.big)+'</strong><span>'+esc(i.small)+'</span></div><button type="button" class="cal-del" data-del-cd="'+esc(c.id)+'" aria-label="Remove countdown '+esc(c.name)+'">×</button></div>'}).join(''):'<div class="empty">No countdowns yet. Add the name and date of an event you are working toward.</div>';
+  g('cdList').innerHTML=all.length?all.map(c=>{const i=cdInfo(c);return '<div class="cd-card '+i.cls+'"><div class="cd-main"><div class="cd-name">'+esc(c.name)+'</div><div class="tiny">'+esc(fmt(c.date))+'</div></div><div class="cd-count"><strong>'+esc(i.big)+'</strong><span>'+esc(i.small)+'</span></div><button type="button" class="cal-del cal-edit" data-edit-cd="'+esc(c.id)+'" aria-label="Edit countdown '+esc(c.name)+'">✎</button><button type="button" class="cal-del" data-del-cd="'+esc(c.id)+'" aria-label="Remove countdown '+esc(c.name)+'">×</button></div>'}).join(''):'<div class="empty">No countdowns yet. Add the name and date of an event you are working toward.</div>';
 }
-function addCountdown(){
-  const btn=g('cdAddBtn'),name=cleanText(g('cdName').value),date=g('cdDate').value;
+function endEditCd(){editingCd=null;g('cdName').value='';g('cdDate').value='';g('cdAddBtn').textContent='＋ ADD COUNTDOWN';g('cdFormTitle').textContent='NEW COUNTDOWN';g('cdCancelEdit').hidden=true}
+function startEditCd(id){
+  const c=model.countdowns.find(x=>x.id===id);if(!c)return;
+  editingCd=id;g('cdName').value=c.name;g('cdDate').value=c.date;
+  g('cdAddBtn').textContent='✓ SAVE CHANGES';g('cdFormTitle').textContent='EDIT COUNTDOWN';g('cdCancelEdit').hidden=false;
+  try{g('cdName').scrollIntoView({behavior:'smooth',block:'center'});g('cdName').focus()}catch(x){}
+}
+function saveCountdown(){
+  const btn=g('cdAddBtn'),name=cleanText(g('cdName').value),date=g('cdDate').value,editing=editingCd;
   if(!name){say('Enter an event name.');g('cdName').focus();return}
   if(!parseKey(date)){say('Choose a valid date between the years 2000 and 2100.');return}
-  if(countdowns.length>=MAX_CD){say('Countdown limit reached. Remove an old one first.');return}
-  if(countdowns.some(c=>c.date===date&&c.name.toLowerCase()===name.toLowerCase())){say('That countdown already exists.');return}
+  const old=editing?model.countdowns.find(x=>x.id===editing):null;
+  if(editing&&!old){say('That countdown no longer exists.');endEditCd();renderAll();return}
+  if(!editing&&model.countdowns.length>=MAX_CD){say('Countdown limit reached. Remove an old one first.');return}
+  if(model.countdowns.some(c=>c.id!==editing&&c.date===date&&c.name.toLowerCase()===name.toLowerCase())){say('That countdown already exists.');return}
   if(!lock('cd',btn))return;
-  const next=countdowns.concat([{id:newId('cd_'),name:name,date:date,createdAt:Date.now()}]);
-  if(!persist(CD_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
-  countdowns=next;g('cdName').value='';g('cdDate').value='';
-  renderAll();say('Countdown added.');
+  const t=Date.now();
+  if(old){const upd=mkCd(old.id,name,date,old.createdAt,Math.max(t,old.updatedAt+1));model.countdowns=model.countdowns.map(c=>c.id===old.id?upd:c)}
+  else model.countdowns=model.countdowns.concat([mkCd(newId('cd_'),name,date,t,t)]);
+  endEditCd();
+  afterChange(old?'Countdown updated.':'Countdown added.');
 }
 function deleteCountdown(id){
-  const c=countdowns.find(x=>x.id===id);if(!c)return;
+  const c=model.countdowns.find(x=>x.id===id);if(!c)return;
   if(!confirm('Remove this countdown?\n\n'+c.name+'\n\nYour study records are not affected.'))return;
-  const next=countdowns.filter(x=>x.id!==id);
-  if(!persist(CD_KEY,next)){say('Could not save. Browser storage is full or blocked.');return}
-  countdowns=next;renderAll();say('Countdown removed.');
+  model.countdowns=model.countdowns.filter(x=>x.id!==id);
+  model.deleted[id]=Math.max(Date.now(),c.updatedAt+1);
+  if(editingCd===id)endEditCd();
+  afterChange('Countdown removed.');
 }
 
 /* ---------- Dashboard widget ---------- */
 function renderNext(){
-  const cd=countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate)[0];
-  const evs=events.filter(e=>dayDiff(e.date)>=0).sort(byDate).slice(0,3);
+  const cd=model.countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate)[0];
+  const evs=model.events.filter(e=>dayDiff(e.date)>=0).sort(byDate).slice(0,3);
   let left;
   if(cd){const i=cdInfo(cd);left='<div class="eyebrow">NEXT COUNTDOWN</div><div class="nu-name">'+esc(cd.name)+'</div><div class="nu-big">'+esc(i.big)+(i.cls==='today'?'':'<small>'+(dayDiff(cd.date)===1?'day left':'days left')+'</small>')+'</div><div class="tiny">'+esc(fmt(cd.date))+'</div>'}
   else left='<div class="eyebrow">NEXT COUNTDOWN</div><div class="tiny" style="margin-top:8px">No countdown set yet. Add your exam date in Countdown.</div>';
   const right='<div class="eyebrow">UPCOMING EVENTS</div>'+(evs.length?evs.map(e=>'<div class="nu-ev"><span class="tag cal-tag t-'+e.type.toLowerCase()+'">'+esc(e.type.toUpperCase())+'</span><span class="nu-ev-title">'+esc(e.title)+'</span><span class="tiny">'+esc(rel(e.date))+'</span></div>').join(''):'<div class="tiny" style="margin-top:8px">Nothing scheduled. Add a test or revision block in Calendar.</div>');
   g('nextUpBody').innerHTML='<div class="nu-wrap"><div class="nu-box">'+left+'</div><div class="nu-box">'+right+'</div></div>';
 }
-
-function renderAll(){renderCalendar();renderDay();renderUpcoming();renderCountdowns();renderNext();lastToday=todayStr()}
+function renderAll(){
+  if(editingEv&&!model.events.some(e=>e.id===editingEv)){endEditEvent();say('The event you were editing was removed on another device.')}
+  if(editingCd&&!model.countdowns.some(c=>c.id===editingCd)){endEditCd();say('The countdown you were editing was removed on another device.')}
+  renderCalendar();renderDay();renderUpcoming();renderCountdowns();renderNext();paintStatus();lastToday=todayStr();
+}
+function checkOwner(){
+  const want=uidNow()||'local';
+  if(want===owner)return false;
+  editingEv=null;editingCd=null;endEditEvent();endEditCd();
+  clearTimeout(syncTimer);
+  loadOwner(want);
+  setStatus(want==='local'?'off':'idle');
+  renderAll();
+  if(want!=='local')cloudSync(false);
+  return true;
+}
 
 /* ---------- Events (each listener is attached exactly once) ---------- */
-g('calGrid').addEventListener('click',ev=>{const b=ev.target.closest('[data-date]');if(!b||!parseKey(b.dataset.date))return;selected=b.dataset.date;g('calDate').value=selected;renderCalendar();renderDay()});
+g('calGrid').addEventListener('click',ev=>{const b=ev.target.closest('[data-date]');if(!b||!parseKey(b.dataset.date))return;selected=b.dataset.date;if(!editingEv)g('calDate').value=selected;renderCalendar();renderDay()});
 g('calPrev').addEventListener('click',()=>shiftMonth(-1));
 g('calNext').addEventListener('click',()=>shiftMonth(1));
-g('calToday').addEventListener('click',()=>{const n=new Date();viewY=n.getFullYear();viewM=n.getMonth();selected=todayStr();g('calDate').value=selected;renderCalendar();renderDay()});
+g('calToday').addEventListener('click',()=>{const n=new Date();viewY=n.getFullYear();viewM=n.getMonth();selected=todayStr();if(!editingEv)g('calDate').value=selected;renderCalendar();renderDay()});
 g('calDate').addEventListener('change',()=>{const v=g('calDate').value,p=parseKey(v);if(!p)return;selected=v;viewY=p.y;viewM=p.m-1;renderCalendar();renderDay()});
-g('calAddBtn').addEventListener('click',addEvent);
-g('calTitle').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();addEvent()}});
-const onDelEvent=ev=>{const b=ev.target.closest('[data-del-event]');if(b)deleteEvent(b.dataset.delEvent)};
-g('calDayList').addEventListener('click',onDelEvent);
-g('calUpcoming').addEventListener('click',onDelEvent);
-g('cdAddBtn').addEventListener('click',addCountdown);
-g('cdName').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();addCountdown()}});
-g('cdList').addEventListener('click',ev=>{const b=ev.target.closest('[data-del-cd]');if(b)deleteCountdown(b.dataset.delCd)});
-g('nextUpPanel').addEventListener('click',ev=>{const b=ev.target.closest('[data-go]');if(b&&typeof window.showPage==='function')window.showPage(b.dataset.go)});
+g('calAddBtn').addEventListener('click',saveEvent);
+g('calCancelEdit').addEventListener('click',()=>{endEditEvent();g('calDate').value=selected});
+g('calTitle').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();saveEvent()}});
+const onEventClick=ev=>{const d=ev.target.closest('[data-del-event]');if(d){deleteEvent(d.dataset.delEvent);return}const e=ev.target.closest('[data-edit-event]');if(e)startEditEvent(e.dataset.editEvent)};
+g('calDayList').addEventListener('click',onEventClick);
+g('calUpcoming').addEventListener('click',onEventClick);
+g('cdAddBtn').addEventListener('click',saveCountdown);
+g('cdCancelEdit').addEventListener('click',endEditCd);
+g('cdName').addEventListener('keydown',ev=>{if(ev.key==='Enter'){ev.preventDefault();saveCountdown()}});
+g('cdList').addEventListener('click',ev=>{const d=ev.target.closest('[data-del-cd]');if(d){deleteCountdown(d.dataset.delCd);return}const e=ev.target.closest('[data-edit-cd]');if(e)startEditCd(e.dataset.editCd)});
+document.addEventListener('click',ev=>{
+  const go=ev.target.closest('[data-go]');if(go&&typeof window.showPage==='function'){window.showPage(go.dataset.go);return}
+  if(ev.target.closest('[data-sync-now]'))cloudSync(true);
+});
 
-/* Refresh when a new page is shown, when the tab becomes visible again, at midnight rollover, and when another tab edits the data. */
+/* Hooks into the existing app (wrappers only call the original first): refresh on page change, start a cloud sync whenever the
+   site's own sync runs (this covers sign-in, sign-up, password reset and page refresh), and switch data when the user signs out. */
 const prevShow=window.showPage;
-if(typeof prevShow==='function')window.showPage=function(page){const r=prevShow.apply(this,arguments);try{if(page==='calendar'||page==='countdown'||page==='dashboard')renderAll()}catch(e){}return r};
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderAll()});
-setInterval(()=>{if(todayStr()!==lastToday)renderAll()},60000);
-window.addEventListener('storage',e=>{if(e.key===null||e.key===EV_KEY||e.key===CD_KEY){events=load(EV_KEY,vEvent);countdowns=load(CD_KEY,vCd);renderAll()}});
+if(typeof prevShow==='function')window.showPage=function(page){const r=prevShow.apply(this,arguments);try{if(page==='calendar'||page==='countdown'||page==='dashboard'){checkOwner();renderAll()}}catch(e){}return r};
+const prevSync=window.sbSync;
+if(typeof prevSync==='function')window.sbSync=function(){const r=prevSync.apply(this,arguments);try{setTimeout(()=>{checkOwner();cloudSync(false)},0)}catch(e){}return r};
+const prevOut=window.sbSignOut;
+if(typeof prevOut==='function')window.sbSignOut=async function(){try{return await prevOut.apply(this,arguments)}finally{try{checkOwner()}catch(e){}}};
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){checkOwner();renderAll();cloudSync(false)}});
+window.addEventListener('online',()=>{blockedUntil=0;cloudSync(false)});
+setInterval(()=>{checkOwner();if(!document.hidden)cloudSync(false);if(todayStr()!==lastToday)renderAll()},45000);
+window.addEventListener('storage',e=>{if(e.key===null||e.key===cacheKey(owner)){model=cleanModel(readCache(owner));renderAll()}});
 
+loadOwner(uidNow()||'local');
 g('calDate').value=selected;
+setStatus(owner==='local'?'off':'idle');
 renderAll();
+if(owner!=='local')cloudSync(false);
 })();
 </script>
 
