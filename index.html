@@ -122,19 +122,99 @@ body:not(.amoled) .stat,body:not(.amoled) .task,body:not(.amoled) .day,body:not(
 .sw-btns .btn{min-height:46px}
 @media(max-width:700px){.hx-tools{grid-template-columns:1fr}.hx-big{font-size:26px}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
-</style></head>
+</style>
+<style id="timer-upgrade-css">
+.timer-workspace{--tw-blue:#35c5ff;position:relative}
+.timer-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 10px;padding:9px;border:1px solid #1760928c;border-radius:12px;background:rgba(3,16,34,.82)}
+.timer-mode-selector{display:inline-flex;gap:4px;padding:4px;border:1px solid #164d72;border-radius:10px;background:#020c19}
+.timer-mode-tab{min-height:42px;padding:9px 18px;border:1px solid transparent;border-radius:7px;background:transparent;color:#91b9d5;font-size:11px;font-weight:850;letter-spacing:1px;touch-action:manipulation}
+.timer-mode-tab[aria-selected="true"]{background:linear-gradient(110deg,#0878ba,#22b9ed);border-color:#42ceff;color:#00111d;box-shadow:0 0 17px #0baeff32}
+.timer-tools{display:flex;justify-content:flex-end;gap:7px;flex-wrap:wrap}
+.timer-tools .btn{min-height:40px;padding:8px 11px}
+.timer-access-status{min-height:18px;margin:0 2px 10px;color:#8fbad7;font-size:10px;line-height:1.45}
+.timer-face[hidden],.timer-settings-panel[hidden]{display:none!important}
+.timer-settings-column{min-width:0}
+.timer-panel{min-width:0}
+.timer-ring{overflow:hidden}
+.timer-inner{max-width:100%;padding:8px}
+.stopwatch-time{font-size:clamp(34px,6vw,54px);letter-spacing:-2px}
+.flip-clock{display:flex;align-items:center;justify-content:center;gap:clamp(2px,.75vw,7px);font-variant-numeric:tabular-nums;line-height:1}
+.flip-digit{position:relative;display:grid;place-items:center;width:clamp(25px,6vw,43px);height:clamp(42px,9vw,66px);overflow:hidden;border:1px solid #243b4e;border-radius:6px;background:linear-gradient(180deg,#101820 0 49%,#030609 50% 100%);color:#fff;font-size:clamp(24px,6vw,42px);font-weight:850;letter-spacing:-1.5px;text-shadow:0 0 13px #fff3;box-shadow:0 5px 18px #0008,inset 0 1px #ffffff10}
+.flip-digit::after{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:#000;box-shadow:0 1px #ffffff13}
+.flip-separator{color:#8de6ff;font-size:clamp(20px,4.5vw,32px);font-weight:800;padding:0 1px;text-shadow:0 0 12px #12bfff70}
+.flip-digit.changed{animation:systemFlip .34s cubic-bezier(.22,.75,.28,1) both;transform-origin:50% 50%}
+@keyframes systemFlip{0%{transform:perspective(220px) rotateX(0);filter:brightness(1.35)}45%{transform:perspective(220px) rotateX(-82deg);filter:brightness(.55)}100%{transform:perspective(220px) rotateX(0);filter:brightness(1)}}
+.timer-workspace.flip-enabled .timer-time{display:none}
+.timer-workspace.flip-enabled .flip-clock{display:flex!important}
+#timerWorkspace:fullscreen{width:100%;height:100%;overflow:auto;padding:clamp(12px,3vw,36px);background:radial-gradient(ellipse at 50% 0,#0b2850,#020812 64%);color:var(--text)}
+#timerWorkspace:fullscreen .timer-layout,#timerWorkspace.focus-fallback .timer-layout{grid-template-columns:minmax(0,1fr);max-width:900px;margin:auto}
+#timerWorkspace:fullscreen .timer-settings-column,#timerWorkspace.focus-fallback .timer-settings-column{display:none}
+#timerWorkspace:fullscreen .timer-panel,#timerWorkspace.focus-fallback .timer-panel{min-height:min(76vh,760px);display:grid;align-content:center;justify-items:center;padding:clamp(18px,5vh,55px)}
+#timerWorkspace:fullscreen .timer-ring,#timerWorkspace.focus-fallback .timer-ring{width:min(410px,72vw);margin:18px auto 24px}
+#timerWorkspace:fullscreen .timer-time,#timerWorkspace.focus-fallback .timer-time{font-size:clamp(54px,12vw,104px);letter-spacing:-4px}
+#timerWorkspace:fullscreen .stopwatch-time,#timerWorkspace.focus-fallback .stopwatch-time{font-size:clamp(36px,8.6vw,80px);letter-spacing:-3px}
+#timerWorkspace:fullscreen .flip-digit,#timerWorkspace.focus-fallback .flip-digit{width:clamp(32px,7.2vw,66px);height:clamp(54px,12vw,92px);font-size:clamp(30px,7vw,58px)}
+#timerWorkspace:fullscreen .timer-toolbar,#timerWorkspace.focus-fallback .timer-toolbar{position:sticky;top:0;z-index:3;background:#020c19ed;backdrop-filter:blur(12px)}
+#timerWorkspace:fullscreen #timerExitFocus:not([hidden]),#timerWorkspace.focus-fallback #timerExitFocus:not([hidden]){display:inline-flex}
+#timerWorkspace.focus-fallback{position:fixed;z-index:9999;inset:0;overflow:auto;margin:0;padding:calc(12px + env(safe-area-inset-top)) calc(12px + env(safe-area-inset-right)) calc(12px + env(safe-area-inset-bottom)) calc(12px + env(safe-area-inset-left));background:radial-gradient(ellipse at 50% 0,#0b2850,#020812 64%)}
+body.timer-focus-active{overflow:hidden}
+@media(max-width:700px){.timer-toolbar{align-items:stretch;flex-direction:column}.timer-mode-selector{display:grid;grid-template-columns:1fr 1fr}.timer-mode-tab{padding:8px 10px}.timer-tools{justify-content:stretch}.timer-tools .btn{flex:1}.timer-access-status{font-size:9px}.timer-layout{grid-template-columns:1fr}.timer-workspace .timer-panel{padding:18px 12px}.timer-ring{width:min(280px,72vw)}}
+@media(max-width:390px){.timer-tools .btn{font-size:10px;padding:8px 6px}.flip-digit{width:23px;height:40px;font-size:22px}.flip-separator{font-size:18px}.stopwatch-time{font-size:32px}}
+@media(prefers-reduced-motion:reduce){.flip-digit.changed{animation:none}}
+</style>
+</head>
 <body><div id="hxBg"></div><div class="app">
-<header class="topbar"><div class="brand"><div class="sigil">S</div><div><div class="brandname">THE <span>SYSTEM</span></div><div class="eyebrow">NEET HUNTER // PERSONAL COMMAND CENTER</div></div></div><div class="topright"><div class="date" id="today"></div><div class="rank" id="syncChip" style="cursor:pointer" onclick="showPage('account')">☁ LOCAL ONLY</div><div class="rank" id="topRank">RANK // E</div><div class="system-toggles" aria-label="Study display controls"><button type="button" class="system-toggle" id="alwaysOnToggle" aria-pressed="false"><span class="led"></span> ALWAYS ON <span id="alwaysOnState">OFF</span></button><button type="button" class="system-toggle" id="amoledToggle" aria-pressed="false"><span class="led"></span> AMOLED <span id="amoledState">OFF</span></button><button type="button" class="system-toggle" id="studyDndToggle" aria-pressed="true"><span class="led"></span> STUDY DND <span id="studyDndState">ON</span></button></div></div></header>
+<header class="topbar"><div class="brand"><div class="sigil">S</div><div><div class="brandname">THE <span>SYSTEM</span></div><div class="eyebrow">NEET HUNTER // PERSONAL COMMAND CENTER</div></div></div><div class="topright"><div class="date" id="today"></div><div class="rank" id="syncChip" style="cursor:pointer" onclick="showPage('account')">☁ LOCAL ONLY</div><div class="rank" id="topRank">RANK // E</div><div class="system-toggles" aria-label="Study display controls"><button type="button" class="system-toggle" id="alwaysOnToggle" aria-pressed="false"><span class="led"></span> KEEP SCREEN AWAKE <span id="alwaysOnState">OFF</span></button><button type="button" class="system-toggle" id="amoledToggle" aria-pressed="false"><span class="led"></span> AMOLED <span id="amoledState">OFF</span></button><button type="button" class="system-toggle" id="studyDndToggle" aria-pressed="true"><span class="led"></span> STUDY DND <span id="studyDndState">ON</span></button></div></div></header>
 <div class="quote-banner"><strong>HUNTER RULE</strong> No fake progress. No perfect days. Just honest work, repeated.</div>
-<div class="layout"><aside class="sidebar"><div class="side-label">COMMAND MENU</div><button class="navbtn active" data-page="dashboard"><b>⌂</b> Overview</button><button class="navbtn" data-page="planner"><b>▤</b> Daily Planner</button><button class="navbtn" data-page="pomodoro"><b>◷</b> Pomodoro</button><button class="navbtn" data-page="rank"><b>♜</b> Hunter Rank</button><button class="navbtn" data-page="subjects"><b>◈</b> Subject Stats</button><button class="navbtn" data-page="analytics"><b>⌁</b> Progress Log</button><button class="navbtn" data-page="calendar"><b>▦</b> Calendar</button><button class="navbtn" data-page="countdown"><b>◐</b> Countdown</button><button class="navbtn" data-page="stopwatch"><b>⏱</b> Stopwatch</button><button class="navbtn" data-page="account"><b>☁</b> Sync Account</button><button class="navbtn" data-page="hxsettings"><b>⚙</b> Settings</button><div class="sidebar-note"><strong>HUNTER PROTOCOL</strong><p>Consistency beats intensity. Complete today's mission, then return tomorrow.</p></div></aside>
+<div class="layout"><aside class="sidebar"><div class="side-label">COMMAND MENU</div><button class="navbtn active" data-page="dashboard"><b>⌂</b> Overview</button><button class="navbtn" data-page="planner"><b>▤</b> Daily Planner</button><button class="navbtn" data-page="pomodoro"><b>◷</b> Study Timer</button><button class="navbtn" data-page="rank"><b>♜</b> Hunter Rank</button><button class="navbtn" data-page="subjects"><b>◈</b> Subject Stats</button><button class="navbtn" data-page="analytics"><b>⌁</b> Progress Log</button><button class="navbtn" data-page="calendar"><b>▦</b> Calendar</button><button class="navbtn" data-page="countdown"><b>◐</b> Exam Dates</button><button class="navbtn" data-page="account"><b>☁</b> Sync Account</button><button class="navbtn" data-page="hxsettings"><b>⚙</b> Settings</button><div class="sidebar-note"><strong>HUNTER PROTOCOL</strong><p>Consistency beats intensity. Complete today's mission, then return tomorrow.</p></div></aside>
 <main class="main">
 <section class="section active" id="dashboard"><div class="hero"><div><div class="eyebrow">PERSONAL STATUS // 001</div><h1>Welcome back, <em>Hunter.</em></h1><p class="sub">Your next rank is built one focused session at a time.</p></div><button class="btn" onclick="showPage('planner')">＋ ADD MISSION</button></div>
 <div class="panel hunter-status-panel" style="margin-bottom:14px;border-color:#27606a;background:radial-gradient(ellipse at 90% 0%,#143a42 0,transparent 45%),linear-gradient(145deg,#0e1a20ed,#0a1318ed)"><div class="panelhead"><h2>◉ HUNTER STATUS</h2><button class="btn ghost" onclick="showPage('rank')">RANK DETAILS ↗</button></div><div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap"><div style="width:78px;height:78px;border:2px solid var(--cyan);border-radius:14px;display:grid;place-items:center;box-shadow:0 0 28px #4ce6ef22"><div style="text-align:center"><div id="dashRankLetter" style="font-size:32px;line-height:1;font-weight:900;color:var(--cyan)">E</div><div class="eyebrow" style="font-size:8px">RANK</div></div></div><div style="flex:1;min-width:160px"><div id="dashRankTitle" style="font-size:18px;font-weight:800">E-RANK HUNTER</div><div class="tiny" id="dashXPText">0 XP · Your journey begins here.</div><div class="progress" style="height:8px;margin-top:10px"><i id="dashXPBar"></i></div><div class="tiny" id="dashNextRank" style="margin-top:6px">Earn XP to unlock your next rank.</div></div><div class="hunter-level"><div class="level-caption">LEVEL</div><div class="level-number" id="dashLevelNum">1</div><div class="level-xp" id="dashLevelXP">0 / 100 XP</div></div></div></div>
 <div class="stats"><div class="stat"><div class="stat-top">FOCUS TODAY <span class="stat-icon">◷</span></div><div class="stat-num"><span id="hoursStat">0</span><small style="font-size:13px;color:var(--muted)"> hrs</small></div><div class="stat-foot">Target: <span id="targetLabel">6</span> hours</div></div><div class="stat"><div class="stat-top">MISSIONS DONE <span class="stat-icon">✓</span></div><div class="stat-num" id="tasksStat">0/0</div><div class="stat-foot">Tasks completed today</div></div><div class="stat"><div class="stat-top">STUDY STREAK <span class="stat-icon">ϟ</span></div><div class="stat-num"><span id="streakStat">0</span><small style="font-size:13px;color:var(--muted)"> days</small></div><div class="stat-foot">Log study to build your streak</div></div><div class="stat"><div class="stat-top">TOTAL STUDY <span class="stat-icon">⌁</span></div><div class="stat-num"><span id="totalStat">0</span><small style="font-size:13px;color:var(--muted)"> hrs</small></div><div class="stat-foot">All-time logged hours</div></div></div>
-<div class="panel" id="nextUpPanel" style="margin-bottom:14px"><div class="panelhead"><h2>◐ NEXT UP</h2><div class="nu-links"><button type="button" class="btn ghost" data-go="calendar">CALENDAR ↗</button><button type="button" class="btn ghost" data-go="countdown">COUNTDOWN ↗</button></div></div><div id="nextUpBody"></div></div>
+<div class="panel" id="nextUpPanel" style="margin-bottom:14px"><div class="panelhead"><h2>◐ NEXT UP</h2><div class="nu-links"><button type="button" class="btn ghost" data-go="calendar">CALENDAR ↗</button><button type="button" class="btn ghost" data-go="countdown">EXAM DATES ↗</button></div></div><div id="nextUpBody"></div></div>
 <div class="grid2"><div class="panel"><div class="panelhead"><h2>Today's Study Output</h2><span class="tiny">DAILY TARGET</span></div><div class="ringwrap"><div class="ring" id="dailyRing"><div class="ringinner"><strong id="dailyPct">0%</strong><span>COMPLETE</span></div></div><div class="ringlegend"><div class="legendrow"><span><i class="dot"></i>Study time logged</span><strong id="ringHours">0h</strong></div><div class="progress"><i id="dailyBar"></i></div><div class="legendrow"><span><i class="dot purple"></i>Remaining target</span><strong id="remainingHours">6h</strong></div><div class="tiny">Small honest sessions count. Log your real time.</div></div></div></div><div class="panel"><div class="panelhead"><h2>Subject Progress</h2><button class="btn ghost" onclick="showPage('subjects')">EDIT</button></div><div id="miniSubjects"></div></div></div>
 <div class="grid2"><div class="panel"><div class="panelhead"><h2>Today's Missions</h2><button class="btn ghost" onclick="showPage('planner')">VIEW ALL</button></div><div class="tasklist" id="dashTasks"></div></div><div class="panel"><div class="panelhead"><h2>Quick Study Log</h2><span class="tiny">ADD SESSION</span></div><div class="focusbox"><div class="label">SESSION COMPLETE?</div><h3>Record your effort.</h3><p>Enter how long you actually studied. No judgment, just data.</p><div class="fieldrow"><div class="field"><label>SUBJECT</label><select id="logSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div><div class="field"><label>HOURS</label><input id="logHours" type="number" min="0.1" max="16" step="0.25" placeholder="e.g. 1.5"></div></div><button class="btn primary" style="width:100%" onclick="logSession()">＋ LOG STUDY SESSION</button></div></div></div></section>
-<section class="section" id="pomodoro"><div class="hero"><div><div class="eyebrow">FOCUS PROTOCOL // 005</div><h1>Pomodoro <em>Timer.</em></h1><p class="sub">One focused session at a time. Your completed focus blocks count toward today's study log.</p></div></div><div class="timer-layout"><div class="panel timer-panel"><div class="eyebrow" id="timerStatus">READY WHEN YOU ARE</div><div class="timer-ring" id="timerRing"><div class="timer-inner"><div class="timer-time" id="timerDisplay">50:00</div><div class="timer-mode" id="timerMode">FOCUS SESSION</div></div></div><div class="timer-controls"><button class="btn primary" id="timerStart" onclick="toggleTimer()">▶ START FOCUS</button><button class="btn ghost" onclick="resetTimer()">↺ RESET</button><button class="btn ghost" onclick="skipTimer()">SKIP ↗</button></div><p class="notice" id="timerHint">Keep this tab open while the timer runs. A finished focus block is logged automatically.</p></div><div><div class="panel"><div class="panelhead"><h2>SESSION SETTINGS</h2><span class="tiny">YOUR PACE</span></div><div class="timer-settings"><div class="field"><label>FOCUS LENGTH</label><select id="focusLength" onchange="changeTimerSettings()"><option value="50">50 minutes</option><option value="25">25 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option></select></div><div class="field"><label>BREAK LENGTH</label><select id="breakLength" onchange="changeTimerSettings()"><option value="10">10 minutes</option><option value="5">5 minutes</option><option value="15">15 minutes</option></select></div><div class="field" style="grid-column:1/-1"><label>SUBJECT FOR THIS SESSION</label><select id="timerSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div></div><p class="notice">Settings apply when you reset or switch sessions. You can pause and resume anytime.</p></div><div class="timer-stats"><div class="timer-mini"><strong id="focusCount">0</strong><span>FOCUS BLOCKS TODAY</span></div><div class="timer-mini"><strong id="focusMinutes">0 min</strong><span>FOCUSED TIME TODAY</span></div></div><div class="panel" style="margin-top:14px"><div class="panelhead"><h2>THE PROTOCOL</h2></div><p class="tiny">01 / Start one focus block.</p><p class="tiny">02 / Study only the chosen task.</p><p class="tiny">03 / Take your break when the timer ends.</p><p class="tiny">04 / Repeat. No need to make the day perfect.</p></div></div></div></section><section class="section" id="stopwatch"><div class="hero"><div><div class="eyebrow">FOCUS PROTOCOL // 006</div><h1>Hunter <em>Stopwatch.</em></h1><p class="sub">Open-ended study timer. Save it to log hours and earn XP like any other session.</p></div></div><div class="timer-layout"><div class="panel timer-panel"><div class="eyebrow" id="swStatus">READY WHEN YOU ARE</div><div class="timer-ring" id="swRing"><div class="timer-inner"><div class="timer-time" id="swDisplay" style="font-size:clamp(28px,8vw,44px)">00:00:00</div><div class="timer-mode">ELAPSED</div></div></div><div class="sw-btns"><button class="btn primary" id="swStart" onclick="hxSw.start()">▶ START</button><button class="btn ghost" onclick="hxSw.reset()">↺ RESET</button><button class="btn" onclick="hxSw.save()">✔ SAVE</button></div><p class="notice">Time is counted from timestamps, so it stays correct if you switch apps or reload. Paused time is never counted.</p></div><div class="panel"><div class="panelhead"><h2>SESSION</h2></div><div class="field"><label>SUBJECT</label><select id="swSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div></div></div></section>
+<section class="section" id="pomodoro"><div class="hero"><div><div class="eyebrow">FOCUS PROTOCOL // 005</div><h1>Study <em>Timer.</em></h1><p class="sub">Choose a mode. Your sessions stay independent when you switch views.</p></div></div>
+<div class="timer-workspace" id="timerWorkspace">
+  <div class="timer-toolbar">
+    <div class="timer-mode-selector" role="tablist" aria-label="Study timer mode">
+      <button type="button" class="timer-mode-tab" id="modePomodoro" role="tab" aria-selected="true" aria-controls="pomodoroFace" data-timer-mode="pomodoro">POMODORO</button>
+      <button type="button" class="timer-mode-tab" id="modeStopwatch" role="tab" aria-selected="false" aria-controls="stopwatchFace" data-timer-mode="stopwatch">STOPWATCH</button>
+    </div>
+    <div class="timer-tools">
+      <button type="button" class="btn ghost" id="clockStyleToggle" aria-pressed="false">◷ FLIP CLOCK OFF</button>
+      <button type="button" class="btn ghost" id="focusToggle">⛶ FOCUS VIEW</button>
+      <button type="button" class="btn ghost" id="timerExitFocus" hidden>EXIT FOCUS</button>
+    </div>
+  </div>
+  <p class="timer-access-status" id="wakeStatus" role="status" aria-live="polite">Keep Screen Awake is off. Screen timeout settings still apply.</p>
+  <div class="timer-layout">
+    <div class="panel timer-panel">
+      <div class="timer-face" id="pomodoroFace" role="tabpanel" aria-labelledby="modePomodoro">
+        <div class="eyebrow" id="timerStatus">READY WHEN YOU ARE</div>
+        <div class="timer-ring" id="timerRing"><div class="timer-inner"><div class="timer-time" id="timerDisplay">50:00</div><div class="flip-clock" id="timerFlipClock" aria-label="Pomodoro remaining time" hidden></div><div class="timer-mode" id="timerMode">FOCUS SESSION</div></div></div>
+        <div class="timer-controls"><button class="btn primary" id="timerStart" onclick="toggleTimer()">▶ START FOCUS</button><button class="btn ghost" onclick="resetTimer()">↺ RESET</button><button class="btn ghost" onclick="skipTimer()">SKIP ↗</button></div>
+        <p class="notice" id="timerHint">A completed focus block is logged automatically. Break time is not logged.</p>
+      </div>
+      <div class="timer-face" id="stopwatchFace" role="tabpanel" aria-labelledby="modeStopwatch" hidden>
+        <div class="eyebrow" id="swStatus">READY WHEN YOU ARE</div>
+        <div class="timer-ring" id="swRing"><div class="timer-inner"><div class="timer-time stopwatch-time" id="swDisplay">00:00:00</div><div class="flip-clock" id="swFlipClock" aria-label="Stopwatch elapsed time" hidden></div><div class="timer-mode">ELAPSED TIME</div></div></div>
+        <div class="sw-btns"><button class="btn primary" id="swStart" onclick="hxSw.start()">▶ START</button><button class="btn ghost" onclick="hxSw.reset()">↺ RESET</button><button class="btn" id="swSave" onclick="hxSw.save()">✔ SAVE SESSION</button></div>
+        <p class="notice">Elapsed time is calculated from timestamps. It is added to your study record only when you save (one minute minimum).</p>
+      </div>
+    </div>
+    <div class="timer-settings-column">
+      <div class="panel timer-settings-panel" id="pomodoroSettings">
+        <div class="panelhead"><h2>SESSION SETTINGS</h2><span class="tiny">YOUR PACE</span></div>
+        <div class="timer-settings"><div class="field"><label for="focusLength">FOCUS LENGTH</label><select id="focusLength" onchange="changeTimerSettings()"><option value="50">50 minutes</option><option value="25">25 minutes</option><option value="45">45 minutes</option><option value="60">60 minutes</option></select></div><div class="field"><label for="breakLength">BREAK LENGTH</label><select id="breakLength" onchange="changeTimerSettings()"><option value="10">10 minutes</option><option value="5">5 minutes</option><option value="15">15 minutes</option></select></div><div class="field" style="grid-column:1/-1"><label for="timerSubject">SUBJECT FOR THIS SESSION</label><select id="timerSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div></div>
+        <p class="notice">Settings apply when you reset or switch sessions. You can pause and resume anytime.</p>
+      </div>
+      <div class="panel timer-settings-panel" id="stopwatchSettings" hidden><div class="panelhead"><h2>STOPWATCH SESSION</h2><span class="tiny">OPEN-ENDED</span></div><div class="field"><label for="swSubject">STUDY SUBJECT</label><select id="swSubject"><option>Physics</option><option>Chemistry</option><option>Biology</option></select></div><p class="notice">Pause time is excluded. Saving uses the site's existing study-log and XP rules.</p></div>
+      <div class="timer-stats timer-settings-panel" id="pomodoroStats"><div class="timer-mini"><strong id="focusCount">0</strong><span>FOCUS BLOCKS TODAY</span></div><div class="timer-mini"><strong id="focusMinutes">0 min</strong><span>FOCUSED TIME TODAY</span></div></div>
+      <div class="panel timer-settings-panel" id="pomodoroProtocol" style="margin-top:14px"><div class="panelhead"><h2>THE PROTOCOL</h2></div><p class="tiny">01 / Start one focus block.</p><p class="tiny">02 / Study only the chosen task.</p><p class="tiny">03 / Take your break when the timer ends.</p><p class="tiny">04 / Repeat. No need to make the day perfect.</p></div>
+    </div>
+  </div>
+</div></section>
 <section class="section" id="hxsettings"><div class="hero"><div><div class="eyebrow">SYSTEM // SETTINGS</div><h1>Appearance <em>&amp; Sound.</em></h1><p class="sub">Saved on this device and browser only. Nothing here is uploaded.</p></div></div><div class="hx-set">
 <div class="panel"><div class="panelhead"><h2>WALLPAPER &amp; APPEARANCE</h2></div><div class="hx-prev" id="hxPrev"></div><div class="hx-row"><input type="file" id="hxFile" accept="image/jpeg,image/png,image/webp,image/gif"><button class="btn" id="hxApply" disabled>APPLY</button><button class="btn ghost" id="hxWallReset">RESET</button></div><p class="notice" id="hxWallMsg">Choose an image to preview it.</p><div class="eyebrow">PRESET THEMES</div><div class="hx-presets" id="hxPresets" style="margin:8px 0 14px"></div><label>BLUR <span><span id="hxBlurV"></span>px</span></label><input type="range" id="hxBlur" min="0" max="16" step="1"><label>BRIGHTNESS <span><span id="hxBrightV"></span>%</span></label><input type="range" id="hxBright" min="30" max="130" step="5"><label>PANEL OPACITY <span><span id="hxAlphaV"></span>%</span></label><input type="range" id="hxAlpha" min="35" max="95" step="5"></div>
 <div class="panel"><div class="panelhead"><h2>TIMER SOUND</h2></div><div class="field"><label>COMPLETION SOUND</label><select id="hxSnd"></select></div><label style="margin-top:12px">VOLUME</label><input type="range" id="hxVol" min="0" max="100"><div class="hx-row"><label style="gap:8px;align-items:center"><input type="checkbox" id="hxMute"> MUTE</label><button class="btn" id="hxPlay">▶ PREVIEW</button></div><div class="field"><label>YOUR OWN SOUND (OPTIONAL, UNDER 3 MB)</label><input type="file" id="hxSndFile" accept="audio/*"></div><p class="notice" id="hxSndMsg">Sounds play only while the browser allows it; a suspended page may stay silent.</p></div>
@@ -150,11 +230,11 @@ body:not(.amoled) .stat,body:not(.amoled) .task,body:not(.amoled) .day,body:not(
 <div><div class="panel"><div class="panelhead"><h2 id="calFormTitle">ADD EVENT</h2><span class="tiny">ACCOUNT SYNC</span></div><div class="field"><label for="calTitle">TITLE</label><input id="calTitle" maxlength="80" autocomplete="off" placeholder="e.g. Physics unit test"></div><div class="fieldrow"><div class="field"><label for="calDate">DATE</label><input id="calDate" type="date" min="2000-01-01" max="2100-12-31"></div><div class="field"><label for="calType">TYPE</label><select id="calType"><option>Test</option><option>Revision</option><option>Study</option><option>Other</option></select></div></div><button type="button" class="btn primary cal-big" id="calAddBtn">＋ ADD EVENT</button><button type="button" class="btn ghost cal-big" id="calCancelEdit" style="margin-top:8px" hidden>CANCEL EDIT</button></div>
 <div class="panel" style="margin-top:14px"><div class="panelhead"><h2 id="calDayTitle">SELECTED DAY</h2></div><div class="tasklist" id="calDayList"></div></div></div></div>
 <div class="panel" style="margin-top:14px"><div class="panelhead"><h2>UPCOMING EVENTS</h2><span class="tiny" id="calUpCount"></span></div><div class="tasklist" id="calUpcoming"></div><p class="notice">When you are signed in, calendar events are saved to your account and appear on every device where you sign in. This device keeps a copy so the page loads fast and works offline. Events are private to your account and are not part of Export Backup. Deleting an event never deletes study records.</p></div></section>
-<section class="section" id="countdown"><div class="hero"><div><div class="eyebrow">TIMERS // 008</div><h1>Exam <em>Countdown.</em></h1><p class="sub">Create countdowns for the dates that matter. You enter every date yourself.</p></div></div>
+<section class="section" id="countdown"><div class="hero"><div><div class="eyebrow">SCHEDULE // 008</div><h1>Exam <em>Milestones.</em></h1><p class="sub">Track exam dates and important milestones. This date tracker is separate from the Pomodoro and Stopwatch modes.</p></div></div>
 <div class="cs-row"><span class="cs-text" id="cdSyncStatus" role="status">☁ Checking sync…</span><button type="button" class="btn" data-sync-now hidden>SYNC NOW</button><button type="button" class="btn" data-sign-in data-go="account">SIGN IN TO SYNC</button></div>
 <div class="cd-layout">
-<div class="panel"><div class="panelhead"><h2 id="cdFormTitle">NEW COUNTDOWN</h2><span class="tiny">ACCOUNT SYNC</span></div><div class="field"><label for="cdName">EVENT NAME</label><input id="cdName" maxlength="80" autocomplete="off" placeholder="e.g. Physics mock test"></div><div class="field"><label for="cdDate">DATE</label><input id="cdDate" type="date" min="2000-01-01" max="2100-12-31"></div><button type="button" class="btn primary cal-big" id="cdAddBtn">＋ ADD COUNTDOWN</button><button type="button" class="btn ghost cal-big" id="cdCancelEdit" style="margin-top:8px" hidden>CANCEL EDIT</button><p class="notice">No exam date is pre-filled. For your exam, enter the date from the official announcement.</p></div>
-<div class="panel"><div class="panelhead"><h2>YOUR COUNTDOWNS</h2><span class="tiny" id="cdCount"></span></div><div class="tasklist" id="cdList"></div><p class="notice">When you are signed in, countdowns are saved to your account and appear on every device where you sign in. This device keeps a copy for fast loading and offline use. They are private to your account and are not part of Export Backup. Removing one never deletes study records.</p></div></div></section>
+<div class="panel"><div class="panelhead"><h2 id="cdFormTitle">NEW EXAM DATE</h2><span class="tiny">ACCOUNT SYNC</span></div><div class="field"><label for="cdName">EVENT NAME</label><input id="cdName" maxlength="80" autocomplete="off" placeholder="e.g. Physics mock test"></div><div class="field"><label for="cdDate">DATE</label><input id="cdDate" type="date" min="2000-01-01" max="2100-12-31"></div><button type="button" class="btn primary cal-big" id="cdAddBtn">＋ ADD EXAM DATE</button><button type="button" class="btn ghost cal-big" id="cdCancelEdit" style="margin-top:8px" hidden>CANCEL EDIT</button><p class="notice">No exam date is pre-filled. Enter dates from official announcements.</p></div>
+<div class="panel"><div class="panelhead"><h2>YOUR EXAM DATES</h2><span class="tiny" id="cdCount"></span></div><div class="tasklist" id="cdList"></div><p class="notice">When you are signed in, exam-date milestones are saved to your account and appear on every device where you sign in. This device keeps a copy for fast loading and offline use. They are private to your account and are not part of Export Backup. Removing one never deletes study records.</p></div></div></section>
 <section class="section" id="account"><div class="hero"><div><div class="eyebrow">CLOUD LINK // 006</div><h1>Sync <em>Account.</em></h1><p class="sub">Sign in on each device to share one study record.</p></div></div>
 <div class="panel" id="authOut"><div class="panelhead"><h2>SIGN IN OR CREATE ACCOUNT</h2><span class="tiny">EMAIL + PASSWORD</span></div><div class="field"><label>EMAIL</label><input id="accEmail" type="email" autocomplete="email" autocapitalize="none" autocorrect="off" spellcheck="false" placeholder="you@example.com"></div><div class="field"><label>PASSWORD (6+ CHARACTERS)</label><input id="accPass" type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false"><label class="tiny" style="display:flex;gap:8px;align-items:center;margin-top:4px"><input type="checkbox" style="width:auto" onchange="$('accPass').type=this.checked?'text':'password'"> Show password</label></div><div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary" onclick="sbSignIn()">SIGN IN</button><button class="btn" onclick="sbSignUp()">CREATE ACCOUNT</button><button class="btn ghost" onclick="sbForgot()">FORGOT PASSWORD?</button></div><p class="notice" id="accMsg"></p><p class="notice">Your study data on this device is kept and merged into your account. Nothing is erased.</p></div>
 <div class="panel" id="authIn" style="display:none"><div class="panelhead"><h2>CONNECTED</h2><span class="tiny" id="accWho"></span></div><p class="sub" id="accStatus"></p><div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:14px"><button class="btn primary" onclick="sbSync(true)">SYNC NOW</button><button class="btn ghost" onclick="sbSignOut()">SIGN OUT</button></div><p class="notice">Changes sync automatically. Signing out keeps your data on this device.</p></div><div class="panel" id="authReset" style="display:none"><div class="panelhead"><h2>CHOOSE A NEW PASSWORD</h2><span class="tiny">RESET LINK VERIFIED</span></div><div class="field"><label>NEW PASSWORD (6+ CHARACTERS)</label><input id="newPass" type="password" autocomplete="new-password" autocapitalize="none" autocorrect="off" spellcheck="false"><label class="tiny" style="display:flex;gap:8px;align-items:center;margin-top:4px"><input type="checkbox" style="width:auto" onchange="$('newPass').type=this.checked?'text':'password'"> Show password</label></div><button class="btn primary" onclick="sbSetPassword()">SAVE NEW PASSWORD</button><p class="notice" id="resMsg"></p><p class="notice">Your study data is not touched. After saving, you are signed in and synced.</p></div></section>
@@ -223,34 +303,49 @@ async function sbSetPassword(){const pw=$('newPass').value;if(pw.length<6){sbRes
  const SETTINGS_KEY='system-neet-display-settings-v1';
  let prefs={alwaysOn:false,amoled:false,studyDnd:true};
  try{prefs={...prefs,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}}catch(e){}
- let screenLock=null;
  const byId=id=>document.getElementById(id);
  function savePrefs(){try{localStorage.setItem(SETTINGS_KEY,JSON.stringify(prefs))}catch(e){}}
  function toastSafe(msg){if(typeof window.toast==='function')window.toast(msg)}
  function paint(){document.body.classList.toggle('amoled',!!prefs.amoled);document.body.classList.toggle('study-dnd',!!prefs.studyDnd);
   [['alwaysOnToggle','alwaysOnState','alwaysOn'],['amoledToggle','amoledState','amoled'],['studyDndToggle','studyDndState','studyDnd']].forEach(([btn,label,key])=>{const b=byId(btn),l=byId(label);if(b){b.setAttribute('aria-pressed',String(!!prefs[key]));if(l)l.textContent=prefs[key]?'ON':'OFF'}})
  }
- async function requestWakeLock(){if(!prefs.alwaysOn||!document.getElementById('pomodoro')?.classList.contains('active')||!(typeof timerRunning!=='undefined'&&timerRunning)){await releaseWakeLock();return}
-  if(!('wakeLock' in navigator)){toastSafe('Always On is not supported by this browser. Keep the Pomodoro page visible and adjust screen timeout if needed.');return}
-  if(screenLock)return;
-  try{screenLock=await navigator.wakeLock.request('screen');screenLock.addEventListener('release',()=>{screenLock=null});}catch(e){screenLock=null;toastSafe('The browser could not keep the screen awake. Keep THE SYSTEM visible while studying.')}
+ let screenLock=null, wakePending=false;
+ const wakeLabel=()=>byId('wakeStatus');
+ function wakeState(text){const el=wakeLabel();if(el)el.textContent=text}
+ function timerIsRunning(){return (typeof timerRunning!=='undefined'&&timerRunning)||(window.hxSw&&typeof window.hxSw.isRunning==='function'&&window.hxSw.isRunning())}
+ async function requestWakeLock(){
+  if(!prefs.alwaysOn){await releaseWakeLock();wakeState('Keep Screen Awake is off. Screen timeout settings still apply.');return}
+  if(!document.getElementById('pomodoro')?.classList.contains('active')){await releaseWakeLock();wakeState('Keep Screen Awake is enabled. Open the Study Timer to use it.');return}
+  if(document.hidden){await releaseWakeLock();wakeState('Enabled. The browser may release the lock while this page is hidden; it will retry when visible.');return}
+  if(!('wakeLock' in navigator)){wakeState('Screen Wake Lock is unavailable in this browser. Device settings may still dim or lock the screen.');return}
+  if(!timerIsRunning()){await releaseWakeLock();wakeState('Enabled. The screen lock will be requested when either timer starts.');return}
+  if(screenLock||wakePending)return;
+  wakePending=true;wakeState('Requesting screen wake lock…');
+  try{
+   const lock=await navigator.wakeLock.request('screen');screenLock=lock;
+   lock.addEventListener('release',()=>{if(screenLock===lock)screenLock=null;if(prefs.alwaysOn&&timerIsRunning()&&!document.hidden)wakeState('Screen wake lock was released by the browser or device. It may be requested again.');else updateWakeStatus()},{once:true});
+   wakeState('Screen wake lock active. Android, battery saver, or browser settings may still override it.');
+  }catch(e){screenLock=null;wakeState('The browser could not keep the screen awake. Device and battery settings may override this feature.');}
+  finally{wakePending=false}
  }
- async function releaseWakeLock(){if(screenLock){try{await screenLock.release()}catch(e){}screenLock=null}}
- byId('alwaysOnToggle')?.addEventListener('click',async()=>{prefs.alwaysOn=!prefs.alwaysOn;savePrefs();paint();if(prefs.alwaysOn){await requestWakeLock();toastSafe('Always On enabled for an active Pomodoro session.')}else{await releaseWakeLock();toastSafe('Always On disabled.')}});
+ async function releaseWakeLock(){if(screenLock){const lock=screenLock;screenLock=null;try{await lock.release()}catch(e){}}}
+ function updateWakeStatus(){if(!prefs.alwaysOn){wakeState('Keep Screen Awake is off. Screen timeout settings still apply.');return}if(!('wakeLock'in navigator)){wakeState('Screen Wake Lock is unavailable in this browser. Device settings may still dim or lock the screen.');return}if(screenLock){wakeState('Screen wake lock active. Android, battery saver, or browser settings may still override it.');return}if(document.hidden){wakeState('Enabled. The browser may release the lock while this page is hidden; it will retry when visible.');return}if(!document.getElementById('pomodoro')?.classList.contains('active')){wakeState('Enabled. Open Study Timer to request the screen wake lock.');return}if(timerIsRunning()){wakeState('Timer running. Requesting screen wake lock…');requestWakeLock()}else wakeState('Enabled. The screen lock will be requested when either timer starts.')}
+ byId('alwaysOnToggle')?.addEventListener('click',async()=>{prefs.alwaysOn=!prefs.alwaysOn;savePrefs();paint();if(prefs.alwaysOn){await requestWakeLock();toastSafe('Keep Screen Awake enabled. Browser and device settings may still override it.')}else{await releaseWakeLock();updateWakeStatus();toastSafe('Keep Screen Awake disabled.')}});
  byId('amoledToggle')?.addEventListener('click',()=>{prefs.amoled=!prefs.amoled;savePrefs();paint();toastSafe(prefs.amoled?'AMOLED black mode enabled.':'AMOLED black mode disabled.')});
  byId('studyDndToggle')?.addEventListener('click',()=>{prefs.studyDnd=!prefs.studyDnd;savePrefs();paint();toastSafe(prefs.studyDnd?'Website-only Study DND enabled. Device notifications are unchanged.':'Website-only Study DND disabled.')});
  const oldToggle=window.toggleTimer;
- if(typeof oldToggle==='function')window.toggleTimer=function(){oldToggle.apply(this,arguments);setTimeout(requestWakeLock,0)};
+ if(typeof oldToggle==='function')window.toggleTimer=function(){oldToggle.apply(this,arguments);requestWakeLock()};
  const oldReset=window.resetTimer;
- if(typeof oldReset==='function')window.resetTimer=function(){oldReset.apply(this,arguments);releaseWakeLock()};
+ if(typeof oldReset==='function')window.resetTimer=function(){oldReset.apply(this,arguments);updateWakeStatus()};
  const oldSkip=window.skipTimer;
- if(typeof oldSkip==='function')window.skipTimer=function(){oldSkip.apply(this,arguments);releaseWakeLock()};
+ if(typeof oldSkip==='function')window.skipTimer=function(){oldSkip.apply(this,arguments);updateWakeStatus()};
  const oldComplete=window.timerComplete;
- if(typeof oldComplete==='function')window.timerComplete=function(){oldComplete.apply(this,arguments);releaseWakeLock()};
+ if(typeof oldComplete==='function')window.timerComplete=function(){oldComplete.apply(this,arguments);updateWakeStatus()};
  const oldShow=window.showPage;
- if(typeof oldShow==='function')window.showPage=function(page){oldShow.apply(this,arguments);if(page!=='pomodoro')releaseWakeLock();else requestWakeLock()};
- document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')requestWakeLock();else releaseWakeLock()});
- paint();
+ if(typeof oldShow==='function')window.showPage=function(page){oldShow.apply(this,arguments);if(page!=='pomodoro'){releaseWakeLock();updateWakeStatus()}else updateWakeStatus()};
+ document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')updateWakeStatus();else releaseWakeLock()});
+ window.systemWake={refresh:updateWakeStatus,release:releaseWakeLock};
+ paint();updateWakeStatus();
 })();
 </script>
 
@@ -533,16 +628,16 @@ function deleteEvent(id){
 /* ---------- Countdown ---------- */
 function cdInfo(c){const d=dayDiff(c.date);if(d===0)return {big:'Today',small:'IT IS TODAY',cls:'today'};if(d>0)return {big:String(d),small:d===1?'DAY REMAINING':'DAYS REMAINING',cls:''};const n=-d;return {big:'Passed',small:(n===1?'1 DAY AGO':n+' DAYS AGO'),cls:'passed'}}
 function renderCountdowns(){
-  g('cdCount').textContent=model.countdowns.length?model.countdowns.length+(model.countdowns.length===1?' COUNTDOWN':' COUNTDOWNS'):'';
+  g('cdCount').textContent=model.countdowns.length?model.countdowns.length+(model.countdowns.length===1?' EXAM DATE' :' EXAM DATES' ):'';
   const up=model.countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate),past=model.countdowns.filter(c=>dayDiff(c.date)<0).sort((a,b)=>byDate(b,a));
   const all=up.concat(past);
-  g('cdList').innerHTML=all.length?all.map(c=>{const i=cdInfo(c);return '<div class="cd-card '+i.cls+'"><div class="cd-main"><div class="cd-name">'+esc(c.name)+'</div><div class="tiny">'+esc(fmt(c.date))+'</div></div><div class="cd-count"><strong>'+esc(i.big)+'</strong><span>'+esc(i.small)+'</span></div><button type="button" class="cal-del cal-edit" data-edit-cd="'+esc(c.id)+'" aria-label="Edit countdown '+esc(c.name)+'">✎</button><button type="button" class="cal-del" data-del-cd="'+esc(c.id)+'" aria-label="Remove countdown '+esc(c.name)+'">×</button></div>'}).join(''):'<div class="empty">No countdowns yet. Add the name and date of an event you are working toward.</div>';
+  g('cdList').innerHTML=all.length?all.map(c=>{const i=cdInfo(c);return '<div class="cd-card '+i.cls+'"><div class="cd-main"><div class="cd-name">'+esc(c.name)+'</div><div class="tiny">'+esc(fmt(c.date))+'</div></div><div class="cd-count"><strong>'+esc(i.big)+'</strong><span>'+esc(i.small)+'</span></div><button type="button" class="cal-del cal-edit" data-edit-cd="'+esc(c.id)+'" aria-label="Edit exam date '+esc(c.name)+'">✎</button><button type="button" class="cal-del" data-del-cd="'+esc(c.id)+'" aria-label="Remove exam date '+esc(c.name)+'">×</button></div>'}).join(''):'<div class="empty">No exam dates saved yet. Add a name and date for an important milestone.</div>';
 }
-function endEditCd(){editingCd=null;g('cdName').value='';g('cdDate').value='';g('cdAddBtn').textContent='＋ ADD COUNTDOWN';g('cdFormTitle').textContent='NEW COUNTDOWN';g('cdCancelEdit').hidden=true}
+function endEditCd(){editingCd=null;g('cdName').value='';g('cdDate').value='';g('cdAddBtn').textContent='＋ ADD EXAM DATE';g('cdFormTitle').textContent='NEW EXAM DATE';g('cdCancelEdit').hidden=true}
 function startEditCd(id){
   const c=model.countdowns.find(x=>x.id===id);if(!c)return;
   editingCd=id;g('cdName').value=c.name;g('cdDate').value=c.date;
-  g('cdAddBtn').textContent='✓ SAVE CHANGES';g('cdFormTitle').textContent='EDIT COUNTDOWN';g('cdCancelEdit').hidden=false;
+  g('cdAddBtn').textContent='✓ SAVE CHANGES';g('cdFormTitle').textContent='EDIT EXAM DATE';g('cdCancelEdit').hidden=false;
   try{g('cdName').scrollIntoView({behavior:'smooth',block:'center'});g('cdName').focus()}catch(x){}
 }
 function saveCountdown(){
@@ -550,23 +645,23 @@ function saveCountdown(){
   if(!name){say('Enter an event name.');g('cdName').focus();return}
   if(!parseKey(date)){say('Choose a valid date between the years 2000 and 2100.');return}
   const old=editing?model.countdowns.find(x=>x.id===editing):null;
-  if(editing&&!old){say('That countdown no longer exists.');endEditCd();renderAll();return}
-  if(!editing&&model.countdowns.length>=MAX_CD){say('Countdown limit reached. Remove an old one first.');return}
-  if(model.countdowns.some(c=>c.id!==editing&&c.date===date&&c.name.toLowerCase()===name.toLowerCase())){say('That countdown already exists.');return}
+  if(editing&&!old){say('That exam date no longer exists.');endEditCd();renderAll();return}
+  if(!editing&&model.countdowns.length>=MAX_CD){say('Exam-date limit reached. Remove an old one first.');return}
+  if(model.countdowns.some(c=>c.id!==editing&&c.date===date&&c.name.toLowerCase()===name.toLowerCase())){say('That exam date is already saved.');return}
   if(!lock('cd',btn))return;
   const t=Date.now();
   if(old){const upd=mkCd(old.id,name,date,old.createdAt,Math.max(t,old.updatedAt+1));model.countdowns=model.countdowns.map(c=>c.id===old.id?upd:c)}
   else model.countdowns=model.countdowns.concat([mkCd(newId('cd_'),name,date,t,t)]);
   endEditCd();
-  afterChange(old?'Countdown updated.':'Countdown added.');
+  afterChange(old?'Exam date updated.':'Exam date added.');
 }
 function deleteCountdown(id){
   const c=model.countdowns.find(x=>x.id===id);if(!c)return;
-  if(!confirm('Remove this countdown?\n\n'+c.name+'\n\nYour study records are not affected.'))return;
+  if(!confirm('Remove this exam date?\n\n'+c.name+'\n\nYour study records are not affected.'))return;
   model.countdowns=model.countdowns.filter(x=>x.id!==id);
   model.deleted[id]=Math.max(Date.now(),c.updatedAt+1);
   if(editingCd===id)endEditCd();
-  afterChange('Countdown removed.');
+  afterChange('Exam date removed.');
 }
 
 /* ---------- Dashboard widget ---------- */
@@ -574,14 +669,14 @@ function renderNext(){
   const cd=model.countdowns.filter(c=>dayDiff(c.date)>=0).sort(byDate)[0];
   const evs=model.events.filter(e=>dayDiff(e.date)>=0).sort(byDate).slice(0,3);
   let left;
-  if(cd){const i=cdInfo(cd);left='<div class="eyebrow">NEXT COUNTDOWN</div><div class="nu-name">'+esc(cd.name)+'</div><div class="nu-big">'+esc(i.big)+(i.cls==='today'?'':'<small>'+(dayDiff(cd.date)===1?'day left':'days left')+'</small>')+'</div><div class="tiny">'+esc(fmt(cd.date))+'</div>'}
-  else left='<div class="eyebrow">NEXT COUNTDOWN</div><div class="tiny" style="margin-top:8px">No countdown set yet. Add your exam date in Countdown.</div>';
+  if(cd){const i=cdInfo(cd);left='<div class="eyebrow">NEXT EXAM DATE</div><div class="nu-name">'+esc(cd.name)+'</div><div class="nu-big">'+esc(i.big)+(i.cls==='today'?'':'<small>'+(dayDiff(cd.date)===1?'day left':'days left')+'</small>')+'</div><div class="tiny">'+esc(fmt(cd.date))+'</div>'}
+  else left='<div class="eyebrow">NEXT EXAM DATE</div><div class="tiny" style="margin-top:8px">No exam date set. Add one in Exam Dates.</div>';
   const right='<div class="eyebrow">UPCOMING EVENTS</div>'+(evs.length?evs.map(e=>'<div class="nu-ev"><span class="tag cal-tag t-'+e.type.toLowerCase()+'">'+esc(e.type.toUpperCase())+'</span><span class="nu-ev-title">'+esc(e.title)+'</span><span class="tiny">'+esc(rel(e.date))+'</span></div>').join(''):'<div class="tiny" style="margin-top:8px">Nothing scheduled. Add a test or revision block in Calendar.</div>');
   g('nextUpBody').innerHTML='<div class="nu-wrap"><div class="nu-box">'+left+'</div><div class="nu-box">'+right+'</div></div>';
 }
 function renderAll(){
   if(editingEv&&!model.events.some(e=>e.id===editingEv)){endEditEvent();say('The event you were editing was removed on another device.')}
-  if(editingCd&&!model.countdowns.some(c=>c.id===editingCd)){endEditCd();say('The countdown you were editing was removed on another device.')}
+  if(editingCd&&!model.countdowns.some(c=>c.id===editingCd)){endEditCd();say('The exam date you were editing was removed on another device.')}
   renderCalendar();renderDay();renderUpcoming();renderCountdowns();renderNext();paintStatus();lastToday=todayStr();
 }
 function checkOwner(){
@@ -688,7 +783,7 @@ function swPaint(){
   el('swStart').textContent=sw.st==='run'?'Ⅱ PAUSE':sw.st==='pause'?'▶ RESUME':'▶ START';
   el('swRing').style.setProperty('--timer-pct',((e/1000)%60)/60*100+'%');
   el('swSubject').disabled=sw.st==='run';
-  var q=el('hxQS');if(q)q.textContent=hms(e);
+  var q=el('hxQS');if(q)q.textContent=hms(e);if(window.renderTimerFlipClocks)window.renderTimerFlipClocks();
 }
 function swStart(){
   if(sw.st==='run'){sw.acc+=Date.now()-sw.t0;sw.st='pause'}
@@ -720,7 +815,7 @@ function swSave(){
     save();toast('Stopwatch session saved: '+hrs+'h.');playSound();swPaint();syncNote();
   }finally{saving=false}
 }
-window.hxSw={start:swStart,reset:swReset,save:swSave};
+window.hxSw={start:swStart,reset:swReset,save:swSave,isRunning:function(){return sw.st==='run'},elapsed:swEl,paint:swPaint};
 /* ---------- Pomodoro persistence + recovery (wraps existing functions) ---------- */
 var PK='hx-pomo-v1';
 function pomoPersist(){
@@ -765,7 +860,7 @@ function inject(){
   var ph=document.querySelector('.hunter-status-panel .panelhead');
   if(ph&&!el('hxName'))ph.insertAdjacentHTML('afterend','<div class="hx-strip"><div><small>NAME</small><strong id="hxName">Hunter</strong></div><div><small>STREAK</small><strong id="hxStreak">0</strong></div><div><small>DAILY RESET</small><strong class="rs" id="hxReset">--:--:--</strong></div></div>');
   var hp=document.querySelector('.hunter-status-panel');
-  if(hp&&!el('hxTools'))hp.insertAdjacentHTML('afterend','<div class="hx-tools" id="hxTools"><div class="panel"><div><div class="eyebrow">POMODORO</div><div class="hx-big" id="hxQP">--:--</div></div><button class="btn" onclick="showPage(\'pomodoro\')">OPEN ↗</button></div><div class="panel"><div><div class="eyebrow">STOPWATCH</div><div class="hx-big" id="hxQS">00:00:00</div></div><button class="btn" onclick="showPage(\'stopwatch\')">OPEN ↗</button></div></div>');
+  if(hp&&!el('hxTools'))hp.insertAdjacentHTML('afterend','<div class="hx-tools" id="hxTools"><div class="panel"><div><div class="eyebrow">UNIFIED STUDY TIMER</div><div class="tiny">Pomodoro and Stopwatch in one workspace</div></div><button class="btn" onclick="showPage(\'pomodoro\')">OPEN TIMER ↗</button></div></div>');
 }
 /* ---------- Appearance (wallpaper / blur / brightness / transparency) ---------- */
 var PRESETS={abyss:'radial-gradient(ellipse at 75% 0,#12467a,transparent 45%),radial-gradient(ellipse at 10% 100%,#0b2a5a,transparent 50%),#030b1a',violet:'radial-gradient(ellipse at 80% 10%,#4b2a96,transparent 50%),radial-gradient(ellipse at 10% 90%,#1d1650,transparent 55%),#080616',ember:'radial-gradient(ellipse at 80% 0,#7a2a12,transparent 50%),radial-gradient(ellipse at 10% 100%,#3b1208,transparent 55%),#0c0504',jade:'radial-gradient(ellipse at 75% 0,#0f6a52,transparent 50%),radial-gradient(ellipse at 10% 100%,#08362f,transparent 55%),#031210'};
@@ -812,4 +907,72 @@ setInterval(function(){if(!document.hidden){if(sw.st==='run')swPaint();hxPaint()
 
 </script>
 
+
+<script id="timer-workspace-upgrade">
+(function(){
+'use strict';
+const $=id=>document.getElementById(id), workspace=$('timerWorkspace');
+if(!workspace)return;
+const MODE_KEY='system-neet-timer-mode-v1',VIEW_KEY='system-neet-timer-view-v1';
+let activeMode='pomodoro',flipEnabled=false;
+try{activeMode=localStorage.getItem(MODE_KEY)==='stopwatch'?'stopwatch':'pomodoro';flipEnabled=localStorage.getItem(VIEW_KEY)==='flip'}catch(e){}
+function modePaint(){
+  const pomo=activeMode==='pomodoro';
+  $('modePomodoro').setAttribute('aria-selected',String(pomo));$('modeStopwatch').setAttribute('aria-selected',String(!pomo));
+  $('pomodoroFace').hidden=!pomo;$('stopwatchFace').hidden=pomo;
+  $('pomodoroSettings').hidden=!pomo;$('pomodoroStats').hidden=!pomo;$('pomodoroProtocol').hidden=!pomo;$('stopwatchSettings').hidden=pomo;
+  if(flipEnabled)workspace.classList.add('flip-enabled');else workspace.classList.remove('flip-enabled');
+  $('clockStyleToggle').setAttribute('aria-pressed',String(flipEnabled));$('clockStyleToggle').textContent=flipEnabled?'◷ FLIP CLOCK ON':'◷ FLIP CLOCK OFF';
+  try{localStorage.setItem(MODE_KEY,activeMode)}catch(e){}
+  if(window.systemWake)window.systemWake.refresh();
+}
+function setTimerMode(mode){if(mode!=='pomodoro'&&mode!=='stopwatch')return;activeMode=mode;modePaint()}
+window.setTimerMode=setTimerMode;
+document.querySelectorAll('[data-timer-mode]').forEach(btn=>btn.addEventListener('click',()=>setTimerMode(btn.dataset.timerMode)));
+$('clockStyleToggle').addEventListener('click',()=>{flipEnabled=!flipEnabled;try{localStorage.setItem(VIEW_KEY,flipEnabled?'flip':'digital')}catch(e){}modePaint();renderAllClocks()});
+function renderFlip(id,seconds){
+  const host=$(id);if(!host)return;
+  const s=Math.max(0,Math.floor(seconds));const text=String(Math.floor(s/3600)).padStart(2,'0')+':'+String(Math.floor(s%3600/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');
+  const chars=Array.from(text);
+  if(host.children.length!==chars.length){host.innerHTML=chars.map((c,i)=>/^\d$/.test(c)?'<span class="flip-digit" data-pos="'+i+'">'+c+'</span>':'<span class="flip-separator" aria-hidden="true">'+c+'</span>').join('');host.dataset.value=text;host.setAttribute('aria-label',text);return}
+  const digitByPosition=new Map(Array.from(host.querySelectorAll('.flip-digit[data-pos]')).map(node=>[Number(node.dataset.pos),node]));
+  chars.forEach((c,i)=>{if(!/^\d$/.test(c))return;const node=digitByPosition.get(i);if(node&&node.textContent!==c){node.textContent=c;node.classList.remove('changed');void node.offsetWidth;node.classList.add('changed');setTimeout(()=>node.classList.remove('changed'),380)}});
+  host.dataset.value=text;host.setAttribute('aria-label',text);
+}
+function renderAllClocks(){
+  if(typeof timerRemaining!=='undefined')renderFlip('timerFlipClock',Math.max(0,Math.ceil(timerRemaining)));
+  if(window.hxSw&&typeof window.hxSw.elapsed==='function')renderFlip('swFlipClock',Math.floor(window.hxSw.elapsed()/1000));
+}
+window.renderTimerFlipClocks=renderAllClocks;
+const originalTimerRender=window.timerRender;
+if(typeof originalTimerRender==='function')window.timerRender=function(){originalTimerRender.apply(this,arguments);renderAllClocks()};
+if(window.hxSw&&typeof window.hxSw.paint==='function'){
+  const oldPaint=window.hxSw.paint;
+  window.hxSw.paint=function(){oldPaint.apply(this,arguments);renderAllClocks()};
+  const oldStart=window.hxSw.start,oldReset=window.hxSw.reset,oldSave=window.hxSw.save;
+  window.hxSw.start=function(){oldStart.apply(this,arguments);renderAllClocks();if(window.systemWake)window.systemWake.refresh()};
+  window.hxSw.reset=function(){oldReset.apply(this,arguments);renderAllClocks();if(window.systemWake)window.systemWake.refresh()};
+  window.hxSw.save=function(){oldSave.apply(this,arguments);renderAllClocks();if(window.systemWake)window.systemWake.refresh()};
+}
+function focusState(on,fallback){$('timerExitFocus').hidden=!on;document.body.classList.toggle('timer-focus-active',on);workspace.classList.toggle('focus-fallback',!!on&&!!fallback)}
+async function exitFocus(){
+  if(document.fullscreenElement===workspace&&document.exitFullscreen){try{await document.exitFullscreen()}catch(e){focusState(false)}}
+  else focusState(false);
+}
+$('focusToggle').addEventListener('click',async()=>{
+  if(workspace.classList.contains('focus-fallback')||document.fullscreenElement===workspace){await exitFocus();return}
+  if(workspace.requestFullscreen){try{await workspace.requestFullscreen();focusState(true,false);return}catch(e){}}
+  focusState(true,true);
+});
+$('timerExitFocus').addEventListener('click',exitFocus);
+document.addEventListener('fullscreenchange',()=>{const on=document.fullscreenElement===workspace;if(!on&&workspace.classList.contains('focus-fallback'))return;focusState(on,false)});
+document.addEventListener('keydown',ev=>{if(ev.key==='Escape'&&workspace.classList.contains('focus-fallback'))focusState(false)});
+window.addEventListener('resize',renderAllClocks);
+// Initialize the face and clocks from saved state; no timer is started, stopped, or reset here.
+modePaint();
+if(window.timerRender)window.timerRender();
+if(window.hxSw&&window.hxSw.paint)window.hxSw.paint();
+renderAllClocks();
+})();
+</script>
 </body></html>
